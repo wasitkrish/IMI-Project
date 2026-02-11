@@ -1,2 +1,2 @@
-hello world
+print("Welcome to the IMI project")
 
