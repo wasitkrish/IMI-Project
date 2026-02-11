@@ -1,1 +1,1 @@
-hello world
+Beginning of the new era
