@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UHTM Dataset — IMI Project README</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050912;
+    --surface: #0b1120;
+    --surface2: #111827;
+    --border: rgba(255,255,255,0.07);
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #38bdf8;
+
+    --m1: #0891b2;   /* Aadi — teal */
+    --m2: #7c3aed;   /* Krish — violet */
+    --m3: #dc2626;   /* Salan — red */
+    --m4: #0f766e;   /* Niranjan — teal-dark */
+    --target: #7f1d1d;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── STAR FIELD ── */
+  #stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%, rgba(56,189,248,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 70%, rgba(124,58,237,0.04) 0%, transparent 60%);
+  }
+  #stars::after {
+    content:'';
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.35) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.45) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(2px 2px at 35% 55%, rgba(56,189,248,0.6) 0%, transparent 100%);
+  }
+
+  /* ── LAYOUT ── */
+  .wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 28px; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+    padding: 60px 28px;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 50px; padding: 5px 16px;
+    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1.5px;
+    color: var(--accent); text-transform: uppercase;
+    animation: fadeUp 0.8s ease both;
+    margin-bottom: 28px;
+  }
+  .hero-badge span { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-title .accent { color: var(--accent); }
+  .hero-title .dim { color: var(--muted); }
+
+  .hero-sub {
+    font-size: 1.1rem; color: var(--muted); max-width: 560px; margin: 20px auto 0;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-stats {
+    display: flex; gap: 32px; margin-top: 48px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.8s 0.35s ease both;
+  }
+  .stat-pill {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 28px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .stat-pill:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .stat-pill .num {
+    font-family: 'Space Mono', monospace; font-size: 1.8rem; font-weight: 700; color: var(--accent);
+  }
+  .stat-pill .lbl { font-size: 11px; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
+
+  .scroll-hint {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--muted); font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    animation: fadeUp 1s 0.6s ease both;
+  }
+  .scroll-hint .arrow { animation: bounce 2s infinite; }
+
+  /* ── SECTION WRAPPER ── */
+  section { padding: 80px 0; border-top: 1px solid var(--border); }
+
+  .section-label {
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 700; letter-spacing: -1px; margin-bottom: 16px;
+  }
+  .section-desc { color: var(--muted); max-width: 620px; margin-bottom: 40px; }
+
+  /* ── OVERVIEW GRID ── */
+  .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:600px){ .overview-grid { grid-template-columns: 1fr; } }
+
+  .overview-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .overview-card::before {
+    content:''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+  }
+  .overview-card:hover::before { transform: scaleX(1); }
+  .overview-card:hover { border-color: rgba(56,189,248,0.25); background: var(--surface2); }
+  .overview-card .oc-icon { font-size: 1.6rem; margin-bottom: 12px; }
+  .overview-card h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+  .overview-card p { color: var(--muted); font-size: 13.5px; line-height: 1.6; }
+
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative;
+  }
+  .pipeline::before {
+    content:''; position: absolute; left: 20px; top: 24px; bottom: 24px; width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--m4));
+  }
+
+  .pipe-step {
+    display: flex; gap: 24px; padding: 20px 0;
+    opacity: 0; transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+  .pipe-step.visible { opacity: 1; transform: none; }
+
+  .pipe-dot {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+    border: 2px solid; position: relative; z-index: 1; background: var(--bg);
+    margin-top: 2px;
+  }
+  .pipe-body h4 { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 4px; }
+  .pipe-body p { color: var(--muted); font-size: 13.5px; }
+
+  /* ── MEMBER CARDS ── */
+  .members-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width:640px){ .members-grid { grid-template-columns: 1fr; } }
+
+  .member-card {
+    border-radius: 20px; padding: 28px;
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s;
+    background: var(--surface);
+  }
+  .member-card.visible { opacity: 1; transform: none; }
+  .member-card:hover { border-color: var(--card-color); }
+
+  .member-card::after {
+    content:''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at top left, var(--card-glow) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .member-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--card-color); margin-bottom: 12px;
+  }
+  .member-name {
+    font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .member-role { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  .feature-range {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.05); border-radius: 8px; padding: 6px 12px;
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--card-color); margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .group-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .gtag {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--muted);
+    transition: all 0.2s;
+  }
+  .gtag:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+  .feature-list { display: flex; flex-direction: column; gap: 6px; }
+  .feat-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: rgba(255,255,255,0.03);
+    border-radius: 8px; font-size: 12.5px;
+    border-left: 3px solid var(--card-color);
+    transition: background 0.2s;
+  }
+  .feat-item:hover { background: rgba(255,255,255,0.07); }
+  .feat-code { font-family: 'Space Mono', monospace; color: var(--card-color); font-size: 11px; }
+  .feat-name { color: var(--muted); font-size: 12px; flex: 1; margin: 0 10px; }
+  .feat-unit { font-size: 11px; color: rgba(255,255,255,0.25); font-family: 'Space Mono', monospace; }
+
+  /* ── TARGETS ── */
+  .targets-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .target-card {
+    flex: 1; min-width: 200px;
+    background: linear-gradient(135deg, rgba(127,29,29,0.3), rgba(127,29,29,0.1));
+    border: 1px solid rgba(220,38,38,0.3); border-radius: 14px; padding: 20px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .target-card:hover { transform: translateY(-3px); border-color: rgba(220,38,38,0.6); }
+  .target-card .t-code { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: #f87171; margin-bottom: 6px; }
+  .target-card h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; }
+  .target-card p { color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+
+  /* ── DATASET TABLE ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    text-align: left; padding: 10px 14px;
+    background: var(--surface2); color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.2s;
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .data-table td:first-child { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); }
+  .data-table td .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px;
+    font-family: 'Space Mono', monospace;
+  }
+  .badge-exp { background: rgba(56,189,248,0.1); color: #7dd3fc; }
+  .badge-syn { background: rgba(251,191,36,0.1); color: #fcd34d; }
+
+  /* ── STRUCTURE TREE ── */
+  .tree {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; font-family: 'Space Mono', monospace; font-size: 12.5px;
+    line-height: 1.9;
+  }
+  .tree .dir { color: var(--accent); }
+  .tree .file { color: var(--muted); }
+  .tree .comment { color: rgba(100,116,139,0.6); font-style: italic; }
+  .tree .member-file { color: #a78bfa; }
+
+  /* ── SETUP BLOCK ── */
+  .code-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 24px;
+    font-family: 'Space Mono', monospace; font-size: 12.5px; line-height: 1.9;
+    position: relative; margin-bottom: 16px;
+    overflow-x: auto;
+  }
+  .code-block .comment { color: #475569; }
+  .code-block .cmd { color: #7dd3fc; }
+  .code-block .arg { color: #86efac; }
+  .code-block .str { color: #fca5a5; }
+  pre { white-space: pre-wrap; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border); padding: 48px 0;
+    text-align: center; color: var(--muted); font-size: 13px;
+  }
+  footer .footer-title {
+    font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700;
+    color: var(--text); margin-bottom: 10px;
+  }
+
+  /* ── TEAM STRIP ── */
+  .team-strip {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 28px;
+  }
+  .team-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 50px; padding: 8px 18px;
+    font-size: 13px; transition: border-color 0.3s;
+  }
+  .team-chip:hover { border-color: var(--chip-color); }
+  .team-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--chip-color); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.8); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(8px); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 16px 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(5,9,18,0.85); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100; padding: 14px 28px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .nav-brand { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 13px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  @media(max-width:500px){ .nav-links { display: none; } }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<nav>
+  <span class="nav-brand">UHTM // IMI-PROJECT</span>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#members">Members</a>
+    <a href="#dataset">Dataset</a>
+    <a href="#setup">Setup</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <div class="hero-badge"><span></span>IMI Research Project · 2026</div>
+  <h1 class="hero-title">
+    <span class="dim">UHTM</span><br>
+    <span class="accent">Dataset</span><br>
+    <span style="font-size:0.5em; font-weight:400; letter-spacing: -0.5px; color: var(--muted)">Ultra-High Temperature Materials</span>
+  </h1>
+  <p class="hero-sub">A collaboratively engineered 200-sample × 48-feature dataset of refractory ceramics &amp; composites, with physics-informed feature engineering across four specialist domains.</p>
+
+  <div class="hero-stats">
+    <div class="stat-pill"><span class="num">200</span><span class="lbl">Samples</span></div>
+    <div class="stat-pill"><span class="num">48</span><span class="lbl">Features</span></div>
+    <div class="stat-pill"><span class="num">3</span><span class="lbl">Targets</span></div>
+    <div class="stat-pill"><span class="num">8</span><span class="lbl">Groups</span></div>
+    <div class="stat-pill"><span class="num">4</span><span class="lbl">Members</span></div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 9l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<section id="overview">
+<div class="wrap">
+  <div class="reveal">
+    <p class="section-label">// What is this?</p>
+    <h2 class="section-title">Project Overview</h2>
+    <p class="section-desc">A structured, multi-member dataset engineering project targeting Ultra-High Temperature Materials (UHTMs) used in re-entry thermal protection systems and hypersonic aerospace applications.</p>
+  </div>
+
+  <div class="overview-grid reveal">
+    <div class="overview-card">
+      <div class="oc-icon">🔥</div>
+      <h4>Domain: UHTMs</h4>
+      <p>Carbides (HfC, ZrC, TaC), Borides (HfB₂, ZrB₂), Nitrides (HfN, ZrN, TaN) and their composites — materials capable of withstanding &gt;3000 K.</p>
+    </div>
+    <div class="overview-card">
+      <div class="oc-icon">🧪</div>
+      <h4>Physics-Informed Features</h4>
+      <p>All 48 features are derived from 5 material anchors (Tₘ, ρ, vₑ, EN, Pₛ) using literature-validated physical relations with realistic noise injection.</p>
+    </div>
+    <div class="overview-card">
+      <div class="oc-icon">🤝</div>
+      <h4>Team-Split Architecture</h4>
+      <p>Each member independently generates their feature groups from the shared base file, with a final merge step producing the full 200×53 matrix.</p>
+    </div>
+    <div class="overview-card">
+      <div class="oc-icon">🤖</div>
+      <h4>ML-Ready Targets</h4>
+      <p>Three regression targets — Flexural Strength, Oxidation Resistance Score, and Thermal Shock Cycles — enable supervised learning and Bayesian optimisation.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════ PIPELINE ═══════════════════ -->
+<section id="pipeline">
+<div class="wrap">
+  <div class="reveal">
+    <p class="section-label">// How it works</p>
+    <h2 class="section-title">Data Pipeline</h2>
+    <p class="section-desc">A reproducible 4-step workflow from base generation to the final merged dataset.</p>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-dot" style="color:var(--accent); border-color:var(--accent);">01</div>
+      <div class="pipe-body">
+        <h4>Base Generation — <code style="font-size:0.85em; color:var(--accent)">Base.py</code></h4>
+        <p>Krish generates <strong>UHTM_base_200.xlsx</strong>: 200 material entries (100 experimental + 100 synthetic) with 5 hidden physical anchors (Tₘ, ρ, vₑ, EN, sintering pressure) and metadata columns (Sample_ID, Material_System, Crystal_Structure, Synthesis_Method).</p>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-dot" style="color:var(--m1); border-color:var(--m1);">02</div>
+      <div class="pipe-body">
+        <h4>Individual Feature Engineering — 4 Members in Parallel</h4>
+        <p>Each member loads the base file and independently computes their 12 assigned features using physics-derived formulas + Gaussian noise (seed=42 for reproducibility). Outputs are individual <code style="font-size:0.85em; color:var(--m1)">.xlsx</code> files.</p>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-dot" style="color:var(--m4); border-color:var(--m4);">03</div>
+      <div class="pipe-body">
+        <h4>Validation &amp; Merge — <code style="font-size:0.85em; color:var(--m4)">mergeAll.py</code></h4>
+        <p>Asserts all 4 member files have 200 rows and matching Sample_IDs, then horizontally joins all feature groups into a single 200×53 DataFrame (5 meta + 48 features + 3 targets).</p>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-dot" style="color:#f59e0b; border-color:#f59e0b;">04</div>
+      <div class="pipe-body">
+        <h4>Final Output — <code style="font-size:0.85em; color:#f59e0b">UHTM_final_200x48.xlsx</code></h4>
+        <p>Color-coded by feature group with a Summary Stats sheet and Feature Legend sheet. Also exported as CSV for ML pipelines.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════ MEMBERS ═══════════════════ -->
+<section id="members">
+<div class="wrap">
+  <div class="reveal">
+    <p class="section-label">// Contributors</p>
+    <h2 class="section-title">Team Contributions</h2>
+    <p class="section-desc">Each member owns a domain of 12 features, ensuring separation of concerns and expertise-driven feature engineering.</p>
+  </div>
+
+  <div class="members-grid">
+
+    <!-- AADI -->
+    <div class="member-card" style="--card-color: var(--m1); --card-glow: rgba(8,145,178,0.08);">
+      <div class="member-num">// Member 01</div>
+      <div class="member-name">Aadi</div>
+      <div class="member-role">Thermodynamic &amp; Electronic Structure</div>
+      <div class="feature-range">📁 dataset.py &nbsp;·&nbsp; F01–F12</div>
+      <div class="group-tags">
+        <span class="gtag">Group A: Thermodynamic</span>
+        <span class="gtag">Group B: Electronic</span>
+      </div>
+      <div class="feature-list">
+        <div class="feat-item"><span class="feat-code">F01</span><span class="feat-name">Melting Point</span><span class="feat-unit">K</span></div>
+        <div class="feat-item"><span class="feat-code">F02</span><span class="feat-name">Debye Temperature</span><span class="feat-unit">K</span></div>
+        <div class="feat-item"><span class="feat-code">F03</span><span class="feat-name">Cohesive Energy</span><span class="feat-unit">eV/atom</span></div>
+        <div class="feat-item"><span class="feat-code">F04</span><span class="feat-name">Formation Enthalpy</span><span class="feat-unit">kJ/mol</span></div>
+        <div class="feat-item"><span class="feat-code">F05</span><span class="feat-name">Lattice Parameter a</span><span class="feat-unit">Å</span></div>
+        <div class="feat-item"><span class="feat-code">F06</span><span class="feat-name">Grüneisen Parameter</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F07</span><span class="feat-name">Band Gap</span><span class="feat-unit">eV</span></div>
+        <div class="feat-item"><span class="feat-code">F08</span><span class="feat-name">DOS at Fermi Level</span><span class="feat-unit">states/eV</span></div>
+        <div class="feat-item"><span class="feat-code">F09</span><span class="feat-name">Bader Charge Transfer</span><span class="feat-unit">e⁻</span></div>
+        <div class="feat-item"><span class="feat-code">F10</span><span class="feat-name">Fermi Velocity</span><span class="feat-unit">m/s</span></div>
+        <div class="feat-item"><span class="feat-code">F11</span><span class="feat-name">Valence Electron Density</span><span class="feat-unit">×10²²/cm³</span></div>
+        <div class="feat-item"><span class="feat-code">F12</span><span class="feat-name">Work Function</span><span class="feat-unit">eV</span></div>
+      </div>
+    </div>
+
+    <!-- KRISH -->
+    <div class="member-card" style="--card-color: var(--m2); --card-glow: rgba(124,58,237,0.08);">
+      <div class="member-num">// Member 02</div>
+      <div class="member-name">Krish</div>
+      <div class="member-role">Mechanical &amp; Thermal Transport · Base Generator</div>
+      <div class="feature-range">📁 Krishh.py · Base.py · mergeAll.py &nbsp;·&nbsp; F13–F24</div>
+      <div class="group-tags">
+        <span class="gtag">Group C: Mechanical</span>
+        <span class="gtag">Group D: Thermal</span>
+        <span class="gtag">🏗 Base Author</span>
+        <span class="gtag">🔗 Merge Lead</span>
+      </div>
+      <div class="feature-list">
+        <div class="feat-item"><span class="feat-code">F13</span><span class="feat-name">Young's Modulus</span><span class="feat-unit">GPa</span></div>
+        <div class="feat-item"><span class="feat-code">F14</span><span class="feat-name">Vickers Hardness</span><span class="feat-unit">GPa</span></div>
+        <div class="feat-item"><span class="feat-code">F15</span><span class="feat-name">Fracture Toughness K<sub>Ic</sub></span><span class="feat-unit">MPa√m</span></div>
+        <div class="feat-item"><span class="feat-code">F16</span><span class="feat-name">Compressive Strength</span><span class="feat-unit">GPa</span></div>
+        <div class="feat-item"><span class="feat-code">F17</span><span class="feat-name">Poisson's Ratio</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F18</span><span class="feat-name">Flexural Strength</span><span class="feat-unit">MPa</span></div>
+        <div class="feat-item"><span class="feat-code">F19</span><span class="feat-name">Thermal Conductivity</span><span class="feat-unit">W/m·K</span></div>
+        <div class="feat-item"><span class="feat-code">F20</span><span class="feat-name">Coeff. Thermal Expansion</span><span class="feat-unit">×10⁻⁶/K</span></div>
+        <div class="feat-item"><span class="feat-code">F21</span><span class="feat-name">Specific Heat Capacity</span><span class="feat-unit">J/kg·K</span></div>
+        <div class="feat-item"><span class="feat-code">F22</span><span class="feat-name">Thermal Diffusivity</span><span class="feat-unit">m²/s</span></div>
+        <div class="feat-item"><span class="feat-code">F23</span><span class="feat-name">Max Service Temperature</span><span class="feat-unit">K</span></div>
+        <div class="feat-item"><span class="feat-code">F24</span><span class="feat-name">Thermal Shock Resistance</span><span class="feat-unit">W/m</span></div>
+      </div>
+    </div>
+
+    <!-- SALAN -->
+    <div class="member-card" style="--card-color: var(--m3); --card-glow: rgba(220,38,38,0.08);">
+      <div class="member-num">// Member 03</div>
+      <div class="member-name">Salan</div>
+      <div class="member-role">Oxidation Stability &amp; Microstructure</div>
+      <div class="feature-range">📁 Salan.py &nbsp;·&nbsp; F25–F36</div>
+      <div class="group-tags">
+        <span class="gtag">Group E: Oxidation</span>
+        <span class="gtag">Group F: Microstructural</span>
+      </div>
+      <div class="feature-list">
+        <div class="feat-item"><span class="feat-code">F25</span><span class="feat-name">Oxidation Onset Temp</span><span class="feat-unit">K</span></div>
+        <div class="feat-item"><span class="feat-code">F26</span><span class="feat-name">Parabolic Rate Const k<sub>p</sub></span><span class="feat-unit">kg²/m⁴s</span></div>
+        <div class="feat-item"><span class="feat-code">F27</span><span class="feat-name">Oxidation Activation Energy</span><span class="feat-unit">kJ/mol</span></div>
+        <div class="feat-item"><span class="feat-code">F28</span><span class="feat-name">Gravimetric Rate k<sub>p</sub></span><span class="feat-unit">g²/cm⁴s</span></div>
+        <div class="feat-item"><span class="feat-code">F29</span><span class="feat-name">Oxide Layer Stability Index</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F30</span><span class="feat-name">Oxygen Diffusivity in Oxide</span><span class="feat-unit">m²/s</span></div>
+        <div class="feat-item"><span class="feat-code">F31</span><span class="feat-name">Avg Grain Size</span><span class="feat-unit">μm</span></div>
+        <div class="feat-item"><span class="feat-code">F32</span><span class="feat-name">Relative Density</span><span class="feat-unit">%</span></div>
+        <div class="feat-item"><span class="feat-code">F33</span><span class="feat-name">Porosity</span><span class="feat-unit">%</span></div>
+        <div class="feat-item"><span class="feat-code">F34</span><span class="feat-name">Crystallite Size (XRD)</span><span class="feat-unit">nm</span></div>
+        <div class="feat-item"><span class="feat-code">F35</span><span class="feat-name">Dislocation Density</span><span class="feat-unit">×10¹²/m²</span></div>
+        <div class="feat-item"><span class="feat-code">F36</span><span class="feat-name">Grain Boundary Energy</span><span class="feat-unit">J/m²</span></div>
+      </div>
+    </div>
+
+    <!-- NIRANJAN -->
+    <div class="member-card" style="--card-color: var(--m4); --card-glow: rgba(15,118,110,0.08);">
+      <div class="member-num">// Member 04</div>
+      <div class="member-name">Niranjan</div>
+      <div class="member-role">Phase/Composite · ML Descriptors · Targets</div>
+      <div class="feature-range">📁 Niranjan.py &nbsp;·&nbsp; F37–F48 + T1–T3</div>
+      <div class="group-tags">
+        <span class="gtag">Group G: Phase/Composite</span>
+        <span class="gtag">Group H: ML Descriptors</span>
+        <span class="gtag">🎯 Target Variables</span>
+      </div>
+      <div class="feature-list">
+        <div class="feat-item"><span class="feat-code">F37</span><span class="feat-name">Phase Stability Index</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F38</span><span class="feat-name">Secondary Phase Vol. Fraction</span><span class="feat-unit">%</span></div>
+        <div class="feat-item"><span class="feat-code">F39</span><span class="feat-name">Interfacial Energy</span><span class="feat-unit">J/m²</span></div>
+        <div class="feat-item"><span class="feat-code">F40</span><span class="feat-name">CTE Mismatch Index</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F41</span><span class="feat-name">Solid Solution Distortion δ</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F42</span><span class="feat-name">Wettability Index</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F43</span><span class="feat-name">Thermal Merit Index</span><span class="feat-unit">W/kg</span></div>
+        <div class="feat-item"><span class="feat-code">F44</span><span class="feat-name">Toughness-Stiffness Index</span><span class="feat-unit">GPa·√GPa</span></div>
+        <div class="feat-item"><span class="feat-code">F45</span><span class="feat-name">Oxidation Merit Score</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F46</span><span class="feat-name">Bond Ionicity Fraction</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F47</span><span class="feat-name">Structural Stability Index</span><span class="feat-unit">—</span></div>
+        <div class="feat-item"><span class="feat-code">F48</span><span class="feat-name">Creep Resistance Parameter</span><span class="feat-unit">—</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TARGETS -->
+  <div class="reveal" style="margin-top:32px;">
+    <p class="section-label" style="margin-bottom:16px;">// Target Variables (Niranjan · Member 04)</p>
+    <div class="targets-row">
+      <div class="target-card">
+        <div class="t-code">T1</div>
+        <h4>Flexural Strength</h4>
+        <p>Multi-factor regression target in MPa. Driven by stiffness, hardness, and porosity. Primary structural design metric.</p>
+      </div>
+      <div class="target-card">
+        <div class="t-code">T2</div>
+        <h4>Oxidation Resistance Score</h4>
+        <p>Composite score 0–10. Weighted from onset temperature, k<sub>p</sub> rate, stability index, and CTE mismatch.</p>
+      </div>
+      <div class="target-card">
+        <div class="t-code">T3</div>
+        <h4>Thermal Shock Cycles</h4>
+        <p>Predicted cycles to failure (integer). Driven by fracture toughness, CTE, and composite mismatch index.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════ DATASET ═══════════════════ -->
+<section id="dataset">
+<div class="wrap">
+  <div class="reveal">
+    <p class="section-label">// Data composition</p>
+    <h2 class="section-title">Material Classes</h2>
+    <p class="section-desc">Ten refractory material families anchored to literature values, spanning carbides, borides, and nitrides in both monolithic and composite forms.</p>
+  </div>
+
+  <div class="reveal">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Material</th><th>Crystal</th><th>T<sub>m</sub> (K)</th><th>ρ (g/cm³)</th><th>v<sub>e</sub></th><th>ΔEN</th><th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>HfC</td><td>FCC</td><td>3900</td><td>12.20</td><td>8</td><td>1.3</td><td><span class="badge badge-exp">carbide</span></td></tr>
+        <tr><td>ZrC</td><td>FCC</td><td>3420</td><td>6.73</td><td>8</td><td>1.3</td><td><span class="badge badge-exp">carbide</span></td></tr>
+        <tr><td>TaC</td><td>FCC</td><td>3880</td><td>14.30</td><td>9</td><td>1.1</td><td><span class="badge badge-exp">carbide</span></td></tr>
+        <tr><td>HfB₂</td><td>HEX</td><td>3380</td><td>10.50</td><td>6</td><td>0.9</td><td><span class="badge badge-syn">boride</span></td></tr>
+        <tr><td>ZrB₂</td><td>HEX</td><td>3245</td><td>6.09</td><td>6</td><td>0.9</td><td><span class="badge badge-syn">boride</span></td></tr>
+        <tr><td>TiC</td><td>FCC</td><td>3160</td><td>4.93</td><td>8</td><td>1.5</td><td><span class="badge badge-exp">carbide</span></td></tr>
+        <tr><td>NbC</td><td>FCC</td><td>3600</td><td>7.79</td><td>9</td><td>1.2</td><td><span class="badge badge-exp">carbide</span></td></tr>
+        <tr><td>HfN</td><td>FCC</td><td>3385</td><td>13.80</td><td>9</td><td>1.6</td><td><span class="badge badge-syn">nitride</span></td></tr>
+        <tr><td>ZrN</td><td>FCC</td><td>2980</td><td>7.09</td><td>9</td><td>1.6</td><td><span class="badge badge-syn">nitride</span></td></tr>
+        <tr><td>TaN</td><td>HEX</td><td>3090</td><td>16.30</td><td>10</td><td>1.4</td><td><span class="badge badge-syn">nitride</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="reveal" style="margin-top:32px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+    <div class="overview-card">
+      <div class="oc-icon">🧫</div>
+      <h4>Experimental (rows 1–100)</h4>
+      <p>Monolithic + composite variants. Composites (index 50–99) include HfC-SiC, ZrB₂-SiC, TaC-HfC and 7 more multi-phase systems.</p>
+    </div>
+    <div class="overview-card">
+      <div class="oc-icon">🔬</div>
+      <h4>Synthetic (rows 101–200)</h4>
+      <p>Monolithic + doped variants. Doped systems (index 150–199) include HfC:Y, ZrC:La, TaC:W and 7 more rare-earth doped compositions.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════ STRUCTURE ═══════════════════ -->
+<section id="structure">
+<div class="wrap">
+  <div class="reveal">
+    <p class="section-label">// Repository layout</p>
+    <h2 class="section-title">File Structure</h2>
+  </div>
+  <div class="reveal">
+    <div class="tree">
+<pre><span class="dir">IMI-Project-main/</span>
+├── <span class="dir">Aadi-Dev/</span>                       <span class="comment"># Member 1 — Thermodynamic + Electronic</span>
+│   ├── <span class="member-file">dataset.py</span>               <span class="comment"># Generates F01–F12</span>
+│   ├── <span class="file">Aadi.xlsx</span>                <span class="comment"># Output: 200 × 17 (meta + 12 features)</span>
+│   └── <span class="file">UHTM_base_200.xlsx</span>       <span class="comment"># Base reference copy</span>
+├── <span class="dir">Krish/</span>                          <span class="comment"># Member 2 — Mechanical + Thermal + Infrastructure</span>
+│   ├── <span class="file">Intro.py</span>                 <span class="comment"># Branch onboarding message</span>
+│   └── <span class="dir">LAB EVALUATION/</span>
+│       ├── <span class="member-file">Krishh.py</span>            <span class="comment"># Generates F13–F24</span>
+│       ├── <span class="file">Krishh.xlsx</span>          <span class="comment"># Output: 200 × 17</span>
+│       └── <span class="dir">Merge/</span>
+│           ├── <span class="member-file">Base.py</span>          <span class="comment"># ★ Generates UHTM_base_200.xlsx</span>
+│           ├── <span class="member-file">mergeAll.py</span>      <span class="comment"># ★ Final merge of all 4 member files</span>
+│           ├── <span class="file">AadiDev.xlsx</span>     <span class="comment"># Member 1 snapshot</span>
+│           ├── <span class="file">Krishh.xlsx</span>      <span class="comment"># Member 2 snapshot</span>
+│           ├── <span class="file">Niranjan.xlsx</span>    <span class="comment"># Member 4 snapshot</span>
+│           ├── <span class="file">Salan.xlsx</span>       <span class="comment"># Member 3 snapshot</span>
+│           └── <span class="file">UHTM_final_200x48.xlsx</span>   <span class="comment"># ★ FINAL DATASET</span>
+├── <span class="dir">Niranjan/</span>                       <span class="comment"># Member 4 — Phase + ML + Targets</span>
+│   ├── <span class="member-file">Niranjan.py</span>              <span class="comment"># Generates F37–F48 + T1–T3</span>
+│   └── <span class="file">Niranjan.xlsx</span>            <span class="comment"># Output: 200 × 20</span>
+├── <span class="dir">Salan/</span>                          <span class="comment"># Member 3 — Oxidation + Microstructural</span>
+│   └── <span class="dir">lab evaluation/</span>
+│       ├── <span class="member-file">Salan.py</span>             <span class="comment"># Generates F25–F36</span>
+│       └── <span class="file">Salan_member3.xlsx</span>   <span class="comment"># Output: 200 × 17</span>
+├── <span class="file">UHTM_final_200x48.csv</span>           <span class="comment"># ★ ML-ready CSV export</span>
+└── <span class="file">UHTM_final_200x48.xlsx</span>          <span class="comment"># ★ Final annotated Excel</span></pre>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════ SETUP ═══════════════════ -->
+<section id="setup">
+<div class="wrap">
+  <div class="reveal">
+    <p class="section-label">// Getting started</p>
+    <h2 class="section-title">Setup &amp; Execution</h2>
+    <p class="section-desc">Run the pipeline in order. All scripts use <code style="color:var(--accent)">numpy.random.seed(42)</code> for full reproducibility.</p>
+  </div>
+
+  <div class="reveal">
+    <p style="color:var(--muted); margin-bottom:12px; font-size:13px;">1. Install dependencies</p>
+    <div class="code-block">
+<pre><span class="cmd">pip install</span> <span class="arg">pandas numpy openpyxl</span></pre>
+    </div>
+
+    <p style="color:var(--muted); margin-bottom:12px; font-size:13px;">2. Generate the base file (run once)</p>
+    <div class="code-block">
+<pre><span class="comment"># From Krish/LAB EVALUATION/Merge/</span>
+<span class="cmd">python</span> <span class="arg">Base.py</span>
+<span class="comment"># → UHTM_base_200.xlsx (200 rows × 10 columns)</span></pre>
+    </div>
+
+    <p style="color:var(--muted); margin-bottom:12px; font-size:13px;">3. Each member generates their features independently</p>
+    <div class="code-block">
+<pre><span class="comment"># Member 1 (Aadi)</span>
+<span class="cmd">python</span> <span class="arg">Aadi-Dev/dataset.py</span>           <span class="comment"># → Aadi.xlsx     (F01–F12)</span>
+
+<span class="comment"># Member 2 (Krish)</span>
+<span class="cmd">python</span> <span class="arg">Krish/LAB\ EVALUATION/Krishh.py</span>  <span class="comment"># → Krishh.xlsx   (F13–F24)</span>
+
+<span class="comment"># Member 3 (Salan)</span>
+<span class="cmd">python</span> <span class="arg">Salan/lab\ evaluation/Salan.py</span>    <span class="comment"># → Salan_member3.xlsx  (F25–F36)</span>
+
+<span class="comment"># Member 4 (Niranjan)</span>
+<span class="cmd">python</span> <span class="arg">Niranjan/Niranjan.py</span>            <span class="comment"># → Niranjan.xlsx (F37–F48 + T1–T3)</span></pre>
+    </div>
+
+    <p style="color:var(--muted); margin-bottom:12px; font-size:13px;">4. Merge all outputs into the final dataset</p>
+    <div class="code-block">
+<pre><span class="comment"># Place all member xlsx files in Merge/ directory, then:</span>
+<span class="cmd">python</span> <span class="arg">Krish/LAB\ EVALUATION/Merge/mergeAll.py</span>
+<span class="comment"># → UHTM_final_200x48.xlsx  (200 × 53: 5 meta + 48 features + 3 targets)</span>
+<span class="comment"># → Summary Stats sheet + Feature Legend sheet included</span></pre>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-title">IMI Project — UHTM Dataset</div>
+    <p style="margin-bottom:4px;">Ultra-High Temperature Materials · Physics-Informed Feature Engineering · 2026</p>
+    <p style="font-size:12px; color:#374151;">Seed: 42 &nbsp;|&nbsp; 200 samples &nbsp;|&nbsp; 48 features &nbsp;|&nbsp; 3 targets &nbsp;|&nbsp; Materials: HfC, ZrC, TaC, HfB₂, ZrB₂, TiC, NbC, HfN, ZrN, TaN</p>
+    <div class="team-strip">
+      <div class="team-chip" style="--chip-color: var(--m1)"><div class="dot"></div> Aadi &nbsp;<span style="color:var(--muted);font-size:11px;">F01–F12</span></div>
+      <div class="team-chip" style="--chip-color: var(--m2)"><div class="dot"></div> Krish &nbsp;<span style="color:var(--muted);font-size:11px;">F13–F24 + Base</span></div>
+      <div class="team-chip" style="--chip-color: var(--m3)"><div class="dot"></div> Salan &nbsp;<span style="color:var(--muted);font-size:11px;">F25–F36</span></div>
+      <div class="team-chip" style="--chip-color: var(--m4)"><div class="dot"></div> Niranjan &nbsp;<span style="color:var(--muted);font-size:11px;">F37–F48 + Targets</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Intersection Observer for scroll reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Stagger member cards
+        if (e.target.classList.contains('members-grid')) {
+          e.target.querySelectorAll('.member-card').forEach((card, i) => {
+            setTimeout(() => card.classList.add('visible'), i * 120);
+          });
+        }
+        // Stagger pipe steps
+        if (e.target.classList.contains('pipeline')) {
+          e.target.querySelectorAll('.pipe-step').forEach((step, i) => {
+            setTimeout(() => step.classList.add('visible'), i * 150);
+          });
+        }
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal, .members-grid, .pipeline').forEach(el => observer.observe(el));
+
+  // Subtle parallax on hero title
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const hero = document.querySelector('.hero-title');
+    if (hero) hero.style.transform = `translateY(${y * 0.12}px)`;
+  });
+</script>
+</body>
+</html>
