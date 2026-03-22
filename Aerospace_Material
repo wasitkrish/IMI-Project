@@ -1,0 +1,312 @@
+"""
+Aerospace High-Resistance Materials Dataset Generator
+Generates a dataset with 500 samples and 160 features covering:
+- Metals & Alloys, Ceramics, Composites, Polymers
+- Thermal, Mechanical, Electrical, Physical, and Environmental properties
+"""
+
+import numpy as np
+import pandas as pd
+
+np.random.seed(42)
+N = 500  # Number of samples
+
+# ─────────────────────────────────────────────
+# 1. MATERIAL METADATA
+# ─────────────────────────────────────────────
+material_types = ["Metal/Alloy", "Ceramic", "Composite", "Polymer"]
+material_names = {
+    "Metal/Alloy": [
+        "Titanium Alloy (Ti-6Al-4V)", "Inconel 718", "Hastelloy X",
+        "Stainless Steel 316L", "Aluminum 7075", "Tungsten Alloy",
+        "Nickel Superalloy", "Cobalt Alloy", "Molybdenum Alloy", "Rhenium Alloy"
+    ],
+    "Ceramic": [
+        "Silicon Carbide (SiC)", "Alumina (Al2O3)", "Zirconia (ZrO2)",
+        "Silicon Nitride (Si3N4)", "Boron Carbide (B4C)", "Hafnium Carbide",
+        "Yttria-Stabilized Zirconia", "Mullite", "Cordierite", "Boron Nitride"
+    ],
+    "Composite": [
+        "Carbon Fiber/Epoxy (CFRP)", "Glass Fiber/Epoxy (GFRP)",
+        "Carbon-Carbon Composite", "Ceramic Matrix Composite (CMC)",
+        "Metal Matrix Composite (MMC)", "Kevlar/Epoxy", "Basalt Fiber Composite",
+        "Oxide-Oxide CMC", "SiC/SiC Composite", "Hybrid CFRP/GFRP"
+    ],
+    "Polymer": [
+        "PEEK (Polyether ether ketone)", "Polyimide (PI)", "PTFE",
+        "Polyphenylene Sulfide (PPS)", "Liquid Crystal Polymer (LCP)",
+        "Bismaleimide (BMI)", "Cyanate Ester", "Polybenzimidazole (PBI)",
+        "Fluoropolymer", "High-Temp Epoxy"
+    ]
+}
+
+mat_types = np.random.choice(material_types, size=N)
+mat_names = [np.random.choice(material_names[t]) for t in mat_types]
+
+# ─────────────────────────────────────────────
+# 2. FEATURE GENERATION FUNCTIONS
+# ─────────────────────────────────────────────
+
+def randn_clipped(mean, std, low, high, size):
+    return np.clip(np.random.normal(mean, std, size), low, high)
+
+def rand_uniform(low, high, size):
+    return np.random.uniform(low, high, size)
+
+# ─────────────────────────────────────────────
+# 3. THERMAL PROPERTIES (30 features)
+# ─────────────────────────────────────────────
+thermal = pd.DataFrame({
+    "thermal_conductivity_W_mK":        randn_clipped(25, 40, 0.1, 400, N),
+    "thermal_diffusivity_mm2_s":        randn_clipped(5, 8, 0.01, 100, N),
+    "specific_heat_capacity_J_kgK":     randn_clipped(500, 300, 100, 2000, N),
+    "melting_point_C":                  randn_clipped(1400, 700, 200, 3500, N),
+    "max_service_temp_C":               randn_clipped(900, 400, 100, 3000, N),
+    "thermal_expansion_coeff_1e-6_K":   randn_clipped(10, 6, 0.5, 30, N),
+    "glass_transition_temp_C":          randn_clipped(250, 150, -60, 500, N),
+    "thermal_shock_resistance_MPa_m":   randn_clipped(5, 4, 0.1, 30, N),
+    "emissivity":                       rand_uniform(0.05, 0.98, N),
+    "heat_deflection_temp_C":           randn_clipped(300, 150, 50, 600, N),
+    "thermal_resistance_K_W":           randn_clipped(0.5, 0.4, 0.01, 5, N),
+    "thermal_stability_index":          rand_uniform(0, 1, N),
+    "oxidation_resistance_temp_C":      randn_clipped(800, 300, 200, 2000, N),
+    "latent_heat_fusion_kJ_kg":         randn_clipped(300, 200, 10, 900, N),
+    "thermal_fatigue_cycles":           randn_clipped(5000, 3000, 100, 50000, N),
+    "creep_onset_temp_C":               randn_clipped(600, 300, 100, 1800, N),
+    "thermal_barrier_coating_thickness_mm": rand_uniform(0.1, 2.5, N),
+    "heat_transfer_coeff_W_m2K":        randn_clipped(200, 150, 5, 1000, N),
+    "thermal_gradient_resistance_C_mm": randn_clipped(50, 30, 1, 300, N),
+    "refractory_index":                 rand_uniform(0, 1, N),
+    "max_continuous_use_temp_C":        randn_clipped(700, 350, 80, 2800, N),
+    "thermal_protection_efficiency":    rand_uniform(0.3, 0.99, N),
+    "flame_resistance_index":           rand_uniform(0, 1, N),
+    "fire_resistance_class":            np.random.randint(1, 5, N).astype(float),
+    "char_formation_tendency":          rand_uniform(0, 1, N),
+    "ablation_rate_mm_s":               rand_uniform(0.001, 0.5, N),
+    "heat_of_ablation_kJ_kg":           randn_clipped(5000, 3000, 500, 20000, N),
+    "temp_cycling_resistance_cycles":   randn_clipped(10000, 5000, 100, 100000, N),
+    "pyrometer_emittance":              rand_uniform(0.1, 0.99, N),
+    "thermal_mass_kJ_K":                randn_clipped(50, 40, 1, 300, N),
+})
+
+# ─────────────────────────────────────────────
+# 4. MECHANICAL PROPERTIES (40 features)
+# ─────────────────────────────────────────────
+mechanical = pd.DataFrame({
+    "tensile_strength_MPa":             randn_clipped(600, 400, 20, 3000, N),
+    "yield_strength_MPa":               randn_clipped(400, 300, 10, 2500, N),
+    "compressive_strength_MPa":         randn_clipped(700, 450, 30, 4000, N),
+    "flexural_strength_MPa":            randn_clipped(500, 350, 20, 3000, N),
+    "shear_strength_MPa":               randn_clipped(300, 200, 10, 1500, N),
+    "elastic_modulus_GPa":              randn_clipped(150, 100, 1, 700, N),
+    "shear_modulus_GPa":                randn_clipped(60, 40, 0.5, 300, N),
+    "bulk_modulus_GPa":                 randn_clipped(100, 70, 1, 500, N),
+    "poissons_ratio":                   randn_clipped(0.3, 0.08, 0.05, 0.5, N),
+    "hardness_vickers_HV":              randn_clipped(400, 300, 10, 3000, N),
+    "hardness_rockwell_HRC":            randn_clipped(35, 20, 0, 70, N),
+    "fracture_toughness_MPa_m05":       randn_clipped(15, 12, 0.5, 100, N),
+    "fatigue_strength_MPa":             randn_clipped(300, 200, 10, 1500, N),
+    "impact_strength_kJ_m2":            randn_clipped(50, 40, 1, 300, N),
+    "elongation_at_break_pct":          randn_clipped(8, 10, 0.1, 60, N),
+    "reduction_in_area_pct":            randn_clipped(25, 20, 0, 80, N),
+    "creep_strength_MPa_1000h":         randn_clipped(200, 150, 5, 800, N),
+    "stress_rupture_strength_MPa":      randn_clipped(250, 180, 5, 900, N),
+    "wear_resistance_index":            rand_uniform(0, 1, N),
+    "abrasion_resistance_mm3":          rand_uniform(0.01, 10, N),
+    "specific_strength_kNm_kg":         randn_clipped(150, 100, 5, 800, N),
+    "specific_stiffness_MNm_kg":        randn_clipped(30, 25, 1, 200, N),
+    "damage_tolerance_index":           rand_uniform(0, 1, N),
+    "notch_sensitivity_factor":         rand_uniform(1.0, 3.5, N),
+    "s_n_fatigue_ratio":                rand_uniform(0.3, 0.6, N),
+    "vibration_damping_loss_factor":    rand_uniform(0.001, 0.15, N),
+    "resonant_frequency_Hz":            randn_clipped(5000, 3000, 100, 50000, N),
+    "dynamic_modulus_GPa":              randn_clipped(160, 100, 1, 700, N),
+    "stiffness_retention_at_temp_pct":  randn_clipped(70, 20, 10, 100, N),
+    "strength_retention_at_temp_pct":   randn_clipped(65, 22, 10, 100, N),
+    "hardness_at_high_temp_HV":         randn_clipped(200, 150, 5, 1200, N),
+    "creep_rate_1e-8_s":                randn_clipped(5, 4, 0.01, 50, N),
+    "buckling_resistance_index":        rand_uniform(0, 1, N),
+    "torsional_strength_MPa":           randn_clipped(250, 180, 10, 1200, N),
+    "bearing_strength_MPa":             randn_clipped(450, 300, 20, 2000, N),
+    "interlayer_shear_strength_MPa":    randn_clipped(80, 50, 5, 400, N),
+    "delamination_resistance_J_m2":     randn_clipped(500, 300, 10, 3000, N),
+    "crack_propagation_rate_mm_cycle":  rand_uniform(1e-7, 1e-4, N),
+    "microhardness_GPa":                randn_clipped(10, 8, 0.5, 50, N),
+    "residual_stress_MPa":              randn_clipped(100, 80, -300, 500, N),
+})
+
+# ─────────────────────────────────────────────
+# 5. PHYSICAL & STRUCTURAL PROPERTIES (20 features)
+# ─────────────────────────────────────────────
+physical = pd.DataFrame({
+    "density_g_cm3":                    randn_clipped(3.5, 2.5, 0.9, 20, N),
+    "porosity_pct":                     rand_uniform(0, 15, N),
+    "grain_size_micrometers":           rand_uniform(0.1, 500, N),
+    "surface_roughness_Ra_micrometers": rand_uniform(0.1, 25, N),
+    "thickness_mm":                     rand_uniform(0.5, 50, N),
+    "fiber_volume_fraction_pct":        rand_uniform(0, 65, N),
+    "matrix_volume_fraction_pct":       rand_uniform(30, 100, N),
+    "void_content_pct":                 rand_uniform(0, 5, N),
+    "aspect_ratio_fibers":              rand_uniform(1, 1000, N),
+    "crystallinity_pct":                rand_uniform(0, 100, N),
+    "phase_composition_primary_pct":    rand_uniform(50, 100, N),
+    "number_of_layers":                 np.random.randint(1, 30, N).astype(float),
+    "layer_thickness_mm":               rand_uniform(0.05, 5, N),
+    "woven_architecture_index":         rand_uniform(0, 1, N),
+    "surface_area_m2_g":                rand_uniform(0.01, 200, N),
+    "relative_density_pct":             rand_uniform(85, 100, N),
+    "anisotropy_ratio":                 rand_uniform(1, 5, N),
+    "interfacial_bond_strength_MPa":    randn_clipped(30, 25, 1, 200, N),
+    "ply_orientation_deg":              rand_uniform(0, 90, N),
+    "reinforcement_type_index":         np.random.randint(0, 5, N).astype(float),
+})
+
+# ─────────────────────────────────────────────
+# 6. ELECTRICAL & MAGNETIC PROPERTIES (15 features)
+# ─────────────────────────────────────────────
+electrical = pd.DataFrame({
+    "electrical_resistivity_ohm_m":     np.power(10, rand_uniform(-8, 14, N)),
+    "dielectric_constant":              randn_clipped(5, 5, 1, 100, N),
+    "dielectric_loss_tangent":          rand_uniform(0.0001, 0.1, N),
+    "breakdown_voltage_kV_mm":          randn_clipped(15, 10, 0.1, 100, N),
+    "magnetic_permeability":            rand_uniform(1, 1000, N),
+    "electrical_conductivity_S_m":      np.power(10, rand_uniform(-14, 7, N)),
+    "piezoelectric_coeff_pC_N":         rand_uniform(0, 500, N),
+    "seebeck_coeff_uV_K":               rand_uniform(-300, 300, N),
+    "hall_coefficient_cm3_C":           rand_uniform(-1, 1, N),
+    "work_function_eV":                 rand_uniform(3, 6, N),
+    "surface_charge_density_mC_m2":     rand_uniform(-10, 10, N),
+    "impedance_ohm":                    randn_clipped(100, 80, 0.01, 1000, N),
+    "emi_shielding_dB":                 randn_clipped(30, 20, 0, 120, N),
+    "charge_carrier_density_1e20_cm3":  rand_uniform(0.001, 100, N),
+    "magnetostriction_ppm":             rand_uniform(0, 100, N),
+})
+
+# ─────────────────────────────────────────────
+# 7. CHEMICAL & CORROSION PROPERTIES (20 features)
+# ─────────────────────────────────────────────
+chemical = pd.DataFrame({
+    "corrosion_rate_mm_year":           rand_uniform(0.001, 5, N),
+    "oxidation_rate_mg_cm2_h":          rand_uniform(0.0001, 2, N),
+    "chemical_resistance_index":        rand_uniform(0, 1, N),
+    "moisture_absorption_pct":          rand_uniform(0, 5, N),
+    "outgassing_rate_Pa_m3_s":          rand_uniform(1e-10, 1e-5, N),
+    "UV_resistance_index":              rand_uniform(0, 1, N),
+    "salt_spray_resistance_h":          randn_clipped(500, 400, 24, 5000, N),
+    "galvanic_corrosion_index":         rand_uniform(0, 1, N),
+    "ph_resistance_range":              rand_uniform(2, 14, N),
+    "solvent_resistance_index":         rand_uniform(0, 1, N),
+    "radiation_resistance_index":       rand_uniform(0, 1, N),
+    "plasma_erosion_rate_um_h":         rand_uniform(0.001, 10, N),
+    "hydrogen_embrittlement_index":     rand_uniform(0, 1, N),
+    "stress_corrosion_cracking_index":  rand_uniform(0, 1, N),
+    "pitting_resistance_PREN":          randn_clipped(25, 15, 0, 60, N),
+    "acid_resistance_index":            rand_uniform(0, 1, N),
+    "alkali_resistance_index":          rand_uniform(0, 1, N),
+    "contamination_tolerance":          rand_uniform(0, 1, N),
+    "surface_energy_mJ_m2":             randn_clipped(40, 25, 10, 200, N),
+    "adhesion_strength_MPa":            randn_clipped(20, 15, 1, 100, N),
+})
+
+# ─────────────────────────────────────────────
+# 8. AEROSPACE-SPECIFIC PROPERTIES (20 features)
+# ─────────────────────────────────────────────
+aerospace = pd.DataFrame({
+    "hypersonic_heat_flux_resistance_MW_m2": rand_uniform(0.1, 50, N),
+    "reentry_survivability_index":           rand_uniform(0, 1, N),
+    "TPS_efficiency_index":                  rand_uniform(0.3, 0.99, N),
+    "vibration_damping_at_altitude":         rand_uniform(0, 1, N),
+    "acoustic_fatigue_resistance_index":     rand_uniform(0, 1, N),
+    "pressurization_cycle_resistance":       randn_clipped(50000, 20000, 1000, 200000, N),
+    "aeroelastic_stability_index":           rand_uniform(0, 1, N),
+    "flutter_speed_m_s":                     randn_clipped(300, 150, 50, 900, N),
+    "lightning_strike_resistance_index":     rand_uniform(0, 1, N),
+    "bird_strike_resistance_J":              randn_clipped(200, 150, 10, 1000, N),
+    "deicing_compatibility_index":           rand_uniform(0, 1, N),
+    "outgassing_space_index":                rand_uniform(0, 1, N),
+    "micrometeorite_resistance_index":       rand_uniform(0, 1, N),
+    "atomic_oxygen_resistance_index":        rand_uniform(0, 1, N),
+    "cryogenic_performance_index":           rand_uniform(0, 1, N),
+    "repair_ease_index":                     rand_uniform(0, 1, N),
+    "manufacturing_complexity_index":        rand_uniform(0, 1, N),
+    "certification_maturity_index":          rand_uniform(0, 1, N),
+    "lifecycle_cost_index":                  rand_uniform(0, 1, N),
+    "weight_savings_vs_aluminum_pct":        randn_clipped(20, 25, -20, 80, N),
+})
+
+# ─────────────────────────────────────────────
+# 9. PROCESSING & MANUFACTURING (15 features)
+# ─────────────────────────────────────────────
+processing = pd.DataFrame({
+    "machinability_index":              rand_uniform(0, 1, N),
+    "weldability_index":                rand_uniform(0, 1, N),
+    "formability_index":                rand_uniform(0, 1, N),
+    "sintering_temp_C":                 randn_clipped(1200, 500, 200, 2500, N),
+    "cure_temp_C":                      randn_clipped(175, 80, 60, 400, N),
+    "cure_pressure_MPa":                rand_uniform(0.1, 10, N),
+    "hot_press_temp_C":                 randn_clipped(800, 400, 100, 2000, N),
+    "deposition_rate_g_h":              rand_uniform(0.1, 500, N),
+    "shrinkage_pct":                    rand_uniform(0, 5, N),
+    "near_net_shape_index":             rand_uniform(0, 1, N),
+    "surface_finish_achievable_Ra":     rand_uniform(0.05, 10, N),
+    "dimensional_tolerance_mm":         rand_uniform(0.001, 1, N),
+    "joining_process_index":            np.random.randint(0, 5, N).astype(float),
+    "post_processing_steps":            np.random.randint(1, 8, N).astype(float),
+    "recyclability_index":              rand_uniform(0, 1, N),
+})
+
+# ─────────────────────────────────────────────
+# 10. TARGET LABEL
+# ─────────────────────────────────────────────
+# Composite score to determine "High Resistance" label
+score = (
+    (thermal["thermal_conductivity_W_mK"] < 30).astype(int) * 2 +
+    (thermal["max_service_temp_C"] > 800).astype(int) * 3 +
+    (mechanical["tensile_strength_MPa"] > 700).astype(int) * 3 +
+    (mechanical["fracture_toughness_MPa_m05"] > 15).astype(int) * 2 +
+    (aerospace["reentry_survivability_index"] > 0.6).astype(int) * 2 +
+    (chemical["corrosion_rate_mm_year"] < 0.5).astype(int) * 1
+)
+high_resistance_label = (score >= 7).astype(int)  # 1 = High Resistance, 0 = Standard
+
+# ─────────────────────────────────────────────
+# 11. ASSEMBLE DATASET
+# ─────────────────────────────────────────────
+meta = pd.DataFrame({
+    "material_name": mat_names,
+    "material_type": mat_types,
+})
+
+df = pd.concat([
+    meta,
+    thermal,
+    mechanical,
+    physical,
+    electrical,
+    chemical,
+    aerospace,
+    processing,
+    pd.DataFrame({"high_resistance_label": high_resistance_label})
+], axis=1)
+
+# ─────────────────────────────────────────────
+# 12. SAVE TO CSV
+# ─────────────────────────────────────────────
+output_path = "aerospace_materials_dataset.csv"
+df.to_csv(output_path, index=False)
+
+print(f"✅ Dataset generated successfully!")
+print(f"   Rows    : {df.shape[0]}")
+print(f"   Columns : {df.shape[1]} (2 metadata + 160 features + 1 label)")
+print(f"   Saved to: {output_path}")
+print(f"\n📊 Label distribution:")
+print(df["high_resistance_label"].value_counts().rename({1: "High Resistance", 0: "Standard"}))
+print(f"\n🔬 Feature categories:")
+print(f"   Thermal properties        : 30")
+print(f"   Mechanical properties     : 40")
+print(f"   Physical/Structural       : 20")
+print(f"   Electrical/Magnetic       : 15")
+print(f"   Chemical/Corrosion        : 20")
+print(f"   Aerospace-Specific        : 20")
+print(f"   Processing/Manufacturing  : 15")
+print(f"   Total                     : 160")
