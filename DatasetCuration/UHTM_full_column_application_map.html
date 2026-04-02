@@ -1,0 +1,344 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.root{padding:20px 18px 36px;font-family:var(--font-sans,Inter,Segoe UI,system-ui,-apple-system,sans-serif)}
+:root{
+  --ui-bg:var(--vscode-editor-background,var(--color-background-primary,#0f1117));
+  --ui-surface:var(--vscode-sideBar-background,var(--color-background-primary,#161a22));
+  --ui-surface-2:var(--vscode-editorWidget-background,var(--color-background-secondary,#1c2230));
+  --ui-text:var(--vscode-foreground,var(--color-text-primary,#e6edf3));
+  --ui-text-muted:var(--vscode-descriptionForeground,var(--color-text-secondary,#a7b0bf));
+  --ui-border:var(--vscode-panel-border,var(--color-border-tertiary,#2b3340));
+  --ui-border-strong:var(--vscode-contrastBorder,var(--color-border-secondary,#3a4658));
+}
+body{background:var(--ui-bg)}
+.root{max-width:1240px;margin:0 auto;color:var(--ui-text)}
+.page-title{font-size:28px;line-height:1.2;font-weight:700;color:var(--ui-text);margin-bottom:6px}
+.page-sub{font-size:14px;line-height:1.5;color:var(--ui-text-muted);margin-bottom:14px}
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 14px 0}
+.scard{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px 12px}
+.scard-val{font-size:20px;font-weight:700;color:var(--ui-text)}
+.scard-lbl{font-size:11px;color:var(--ui-text-muted);margin-top:2px}
+
+.controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.controls input{flex:1;min-width:160px;padding:8px 10px;font-size:13px;border:1px solid var(--ui-border);border-radius:10px;background:var(--ui-surface);color:var(--ui-text)}
+.controls input:focus{outline:none;border-color:var(--ui-border-strong)}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.fp{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--ui-border);cursor:pointer;color:var(--ui-text-muted);background:var(--ui-surface);transition:all .12s;white-space:nowrap}
+.fp:hover{border-color:var(--ui-border-strong);color:var(--ui-text)}
+.fp.on{font-weight:600;color:var(--ui-text)}
+
+.fp.g0.on{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489}
+.fp.g1.on{background:#E1F5EE;border-color:#5DCAA5;color:#085041}
+.fp.g2.on{background:#FAEEDA;border-color:#EF9F27;color:#633806}
+.fp.g3.on{background:#FAECE7;border-color:#F0997B;color:#712B13}
+.fp.g4.on{background:#E6F1FB;border-color:#85B7EB;color:#0C447C}
+.fp.g5.on{background:#EAF3DE;border-color:#97C459;color:#27500A}
+.fp.g6.on{background:#F1EFE8;border-color:#B4B2A9;color:#444441}
+.fp.g7.on{background:#FBEAF0;border-color:#ED93B1;color:#72243E}
+
+@media(prefers-color-scheme:dark){
+  .fp.g0.on{background:#26215C;border-color:#534AB7;color:#CECBF6}
+  .fp.g1.on{background:#04342C;border-color:#0F6E56;color:#9FE1CB}
+  .fp.g2.on{background:#412402;border-color:#854F0B;color:#FAC775}
+  .fp.g3.on{background:#4A1B0C;border-color:#993C1D;color:#F5C4B3}
+  .fp.g4.on{background:#042C53;border-color:#185FA5;color:#B5D4F4}
+  .fp.g5.on{background:#173404;border-color:#3B6D11;color:#C0DD97}
+  .fp.g6.on{background:#2C2C2A;border-color:#5F5E5A;color:#D3D1C7}
+  .fp.g7.on{background:#4B1528;border-color:#993556;color:#F4C0D1}
+}
+
+.count{font-size:12px;color:var(--ui-text-muted);padding:0 4px}
+
+.table-wrap{overflow-x:auto;margin-top:12px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface)}
+table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;min-width:1080px}
+th{text-align:left;padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ui-text-muted);border-bottom:1px solid var(--ui-border);background:var(--ui-surface-2);white-space:nowrap;position:sticky;top:0;z-index:2}
+td{padding:8px 10px;border-bottom:1px solid var(--ui-border);vertical-align:top;line-height:1.45}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--ui-surface-2)}
+
+th:nth-child(1),td:nth-child(1){width:90px}
+th:nth-child(2),td:nth-child(2){width:80px}
+th:nth-child(3),td:nth-child(3){width:16%}
+th:nth-child(4),td:nth-child(4){width:22%}
+th:nth-child(5),td:nth-child(5){width:14%}
+th:nth-child(6),td:nth-child(6){width:auto}
+
+.code{font-family:var(--font-mono,ui-monospace,Menlo,monospace);font-size:11px;color:var(--ui-text)}
+.grp-pill{font-size:10px;font-weight:500;padding:2px 6px;border-radius:3px;white-space:nowrap;display:inline-block}
+.physical{font-size:12px;color:var(--ui-text)}
+.what-text{font-size:12px;color:var(--ui-text-muted)}
+.tgt-pill{font-size:10px;padding:2px 6px;border-radius:3px;border:1px solid var(--ui-border);color:var(--ui-text-muted);white-space:nowrap;display:inline-block;margin:1px 1px 1px 0}
+.app-text{font-size:12px;color:var(--ui-text)}
+
+.g0-bg{background:#EEEDFE;color:#3C3489}
+.g1-bg{background:#E1F5EE;color:#085041}
+.g2-bg{background:#FAEEDA;color:#633806}
+.g3-bg{background:#FAECE7;color:#712B13}
+.g4-bg{background:#E6F1FB;color:#0C447C}
+.g5-bg{background:#EAF3DE;color:#27500A}
+.g6-bg{background:#F1EFE8;color:#444441}
+.g7-bg{background:#FBEAF0;color:#72243E}
+
+@media(prefers-color-scheme:dark){
+  .g0-bg{background:#26215C;color:#CECBF6}
+  .g1-bg{background:#04342C;color:#9FE1CB}
+  .g2-bg{background:#412402;color:#FAC775}
+  .g3-bg{background:#4A1B0C;color:#F5C4B3}
+  .g4-bg{background:#042C53;color:#B5D4F4}
+  .g5-bg{background:#173404;color:#C0DD97}
+  .g6-bg{background:#2C2C2A;color:#D3D1C7}
+  .g7-bg{background:#4B1528;color:#F4C0D1}
+}
+
+@media (max-width:980px){
+  .summary-strip{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:620px){
+  .page-title{font-size:22px}
+  .page-sub{font-size:13px}
+  .summary-strip{grid-template-columns:1fr}
+}
+</style>
+
+<div class="root">
+<div class="page-title">UHTM Full Column-to-Application Map</div>
+<div class="page-sub">Search and filter every feature by physical meaning, model target influence, and aerospace application relevance.</div>
+<div class="summary-strip">
+  <div class="scard"><div class="scard-val">140</div><div class="scard-lbl">Total columns</div></div>
+  <div class="scard"><div class="scard-val">9</div><div class="scard-lbl">Grouped feature families</div></div>
+  <div class="scard"><div class="scard-val">Live filters</div><div class="scard-lbl">Search + group toggles</div></div>
+  <div class="scard"><div class="scard-val">Application linked</div><div class="scard-lbl">Property → use-case traceability</div></div>
+</div>
+<div class="controls">
+  <input type="text" id="search" placeholder="Search column, property, or application…" oninput="render()">
+  <span class="count" id="cnt"></span>
+</div>
+<div class="filter-row" id="filters"></div>
+<div class="table-wrap">
+<table>
+  <thead><tr>
+    <th>Column</th><th>Group</th><th>Physical property</th><th>What it encodes</th><th>Target driven</th><th>Application</th>
+  </tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+</div>
+
+<script>
+const GROUPS = [
+  {k:"Identity",      label:"Identity",        cls:"g0"},
+  {k:"Composition",   label:"Composition",     cls:"g1"},
+  {k:"Target",        label:"Targets",          cls:"g2"},
+  {k:"Diagnostic",    label:"Diagnostics",      cls:"g3"},
+  {k:"Roost B1a",     label:"R: raw fraction",  cls:"g4"},
+  {k:"Roost B1b",     label:"R: self-interact", cls:"g4"},
+  {k:"Roost B2",      label:"R: pair interact", cls:"g5"},
+  {k:"Roost B3",      label:"R: Tm/EN/VEC proj",cls:"g6"},
+  {k:"MatBERT PCA",   label:"MatBERT PCA",      cls:"g7"},
+];
+
+function gCls(group){
+  for(const g of GROUPS) if(group.startsWith(g.k)) return g.cls;
+  return "g6";
+}
+function gLabel(group){
+  for(const g of GROUPS) if(group.startsWith(g.k)) return g.label;
+  return group;
+}
+
+const DATA = [];
+const push = (col,group,physical,what,target,app) => DATA.push({col,group,physical,what,target,app});
+
+push("Formula","Identity","Stoichiometric identity","Human-readable element+fraction string","—","All applications — primary lookup key");
+
+const comp = [
+  ["Hf","Mole fraction of Hf","Highest-Tm metal in set (2506 K). Dense, neutron-absorbing.","Melting point ↑","Re-entry heat shields, nuclear-grade ceramics"],
+  ["Zr","Mole fraction of Zr","High Tm (2128 K), excellent corrosion resistance, ZrN hardcoating.","Melting point ↑, OxRes ↑","Hypersonic nose cones, nuclear fuel cladding"],
+  ["Ta","Mole fraction of Ta","Highest-Tm pure metal (3290 K), good ductility, Ta–C gives +900 K boost.","Melting point ↑↑","Rocket nozzles, missile nose tips"],
+  ["Nb","Mole fraction of Nb","High Tm (2750 K), lighter than Ta, forms NbC carbide.","Melting point ↑","Turbine blades, lightweight hypersonic structures"],
+  ["Ti","Mole fraction of Ti","Lower Tm (1941 K) but lowest density — adds toughness via mixing entropy.","Toughness ↑","Fighter jet airframes, compressor blades"],
+  ["C", "Mole fraction of C", "Forms HfC/TaC/ZrC — the highest-Tm binary compounds known (HfC ~3960 K).","Melting point ↑↑↑","Re-entry leading edges, rocket throat inserts"],
+  ["B", "Mole fraction of B", "Forms B₂O₃ glassy self-sealing oxide at high temperature.","OxRes ↑","Oxidation-resistant coatings, hypersonic fairings"],
+  ["N", "Mole fraction of N", "Forms hard nitrides (ZrN, HfN) — wear-resistant, Zr–N gives +700 K boost.","Hardness ↑, OxRes ↑","Wear coatings, turbine hard-face, cutting tools"],
+  ["Si","Mole fraction of Si","Forms SiO₂ self-healing oxide — primary oxidation barrier in the model.","OxRes ↑↑","Hypersonic thermal protection, jet combustor liners"],
+];
+comp.forEach(([el,ph,wh,tg,ap])=>push(`x_${el}`,"Composition",ph,wh,tg,ap));
+
+push("Tm_K","Target","Melting point (K)","Rule-of-mixtures Tm + Hf–C(+800K)/Ta–C(+900K)/Zr–N(+700K) bonding boosts. Primary survival criterion.","Self","ALL — material must not melt. Critical at re-entry (3000 K), hypersonic (2500 K), turbines (1900 K)");
+push("OxRes","Target","Oxidation resistance [0–1]","Driven by Si+B fraction and electronegativity mismatch across elements. High = protective oxide forms quickly.","Self","Sustained hypersonic flight, jet combustors, any oxygen-rich high-temperature environment");
+push("Toughness","Target","Fracture toughness proxy","Mixing entropy × mean VEC. High-entropy multi-element alloys + optimal VEC = crack-resistant material.","Self","Turbine blades (cyclic thermal stress), re-entry tiles (acoustic/thermal shock), structural components");
+push("Roost_MatBERT_CosineSim","Diagnostic","Encoder agreement score","How similarly the physics model and literature model represent this compound. Near 0 = complementary (normal).","Uncertainty proxy","Identifies compounds where literature is sparse — high-risk, high-reward DFT validation candidates");
+push("LitTheory_Gap_Flag","Diagnostic","DFT priority flag {0,1}","Bottom 20% cosine similarity. These 140 compounds are where theory and experimental data most disagree.","Experimental priority","Directs lab resources — flag=1 means 'test this next'; likely undiscovered high performers hidden here");
+
+const EL=["Hf","Zr","Ta","Nb","Ti","C","B","N","Si"];
+const compApp={"Hf":"Re-entry heat shields, nuclear ceramics","Zr":"Hypersonic nose cones, nuclear cladding","Ta":"Rocket nozzles, missile nose tips","Nb":"Turbine blades, lightweight hypersonic","Ti":"Fighter jet airframes, compressor blades","C":"Re-entry ceramics, rocket throat inserts","B":"Oxidation-resistant coatings","N":"Wear coatings, turbine hard-face","Si":"Hypersonic thermal protection, combustor liners"};
+const b1bApp={"Hf":"Single-element HfC dominant — re-entry shields","Zr":"Dominant Zr → ZrN/ZrC coatings, nuclear cladding","Ta":"Dominant Ta → highest-Tm rocket nozzle alloys","Nb":"Dominant Nb → lightweight turbine superalloys","Ti":"Dominant Ti → structural aerospace, compressor","C":"Dominant C → carbide ceramics, throat inserts","B":"Dominant B → oxidation-barrier coatings","N":"Dominant N → hard nitride wear coatings","Si":"Dominant Si → SiO₂-forming oxidation barriers"};
+
+EL.forEach((el,i)=>{
+  push(`R_${String(i).padStart(2,'0')}`,"Roost B1a — Raw fraction",`Amount of ${el} in alloy (raw)`,`Direct copy of x_${el}. Baseline composition signal for all property predictions.`,"Tm_K, all targets",compApp[el]);
+});
+EL.forEach((el,i)=>{
+  push(`R_${String(i+9).padStart(2,'0')}`,"Roost B1b — Self-interaction",`${el} dominance (x_${el}²)`,`Large only when ${el} is the dominant element. Encodes single-element control of properties.`,"Tm_K (metals), OxRes (Si,B)",b1bApp[el]);
+});
+
+const pairs22=[["Hf","Zr"],["Hf","Ta"],["Hf","Nb"],["Hf","Ti"],["Hf","C"],["Hf","B"],["Hf","N"],["Hf","Si"],["Zr","Ta"],["Zr","Nb"],["Zr","Ti"],["Zr","C"],["Zr","B"],["Zr","N"],["Zr","Si"],["Ta","Nb"],["Ta","Ti"],["Ta","C"],["Ta","B"],["Ta","N"],["Ta","Si"],["Nb","Ti"]];
+const pairData=[
+  ["Hf–Zr co-presence","Both refractory Grp IV metals — stable solid solution with moderate Tm","Melting point moderate","Re-entry tiles, nuclear ceramics — solid-solution stability"],
+  ["Hf–Ta co-presence","Two highest-Tm metals combined — very high Tm alloy","Melting point ↑↑","Rocket nozzle inserts, re-entry leading edges"],
+  ["Hf–Nb co-presence","Refractory pair, lighter than Hf–Ta — structural hypersonic use","Melting point ↑","Lightweight hypersonic structural frames"],
+  ["Hf–Ti co-presence","Adds ductility and entropy to Hf base — toughness gain","Toughness ↑","Structural thermal protection systems"],
+  ["Hf–C co-presence","HfC: highest-Tm binary compound (~3960 K). +800 K model boost.","Melting point ↑↑↑","Re-entry heat shields, rocket throat liners"],
+  ["Hf–B co-presence","HfB₂: ultra-high-Tm boride — hard and heat-resistant","Melting point ↑↑, Hardness ↑","Hypersonic leading edges, sharp nose tips"],
+  ["Hf–N co-presence","HfN: hard, high-Tm nitride coating material","Hardness ↑, OxRes ↑","Wear-resistant coatings, turbine hard-face"],
+  ["Hf–Si co-presence","HfSi silicide: oxidation-resistant at elevated temperature","OxRes ↑","Oxidation barrier layers on structural components"],
+  ["Zr–Ta co-presence","High Tm refractory pair with good corrosion resistance","Melting point ↑","Hypersonic nose cones, hot structures"],
+  ["Zr–Nb co-presence","Classic nuclear cladding alloy pair — excellent corrosion resistance","Corrosion resistance","Nuclear fuel cladding, pressure vessel liners"],
+  ["Zr–Ti co-presence","Lightweight refractory with good toughness from entropy","Toughness ↑","Compressor blades, lightweight hypersonic structures"],
+  ["Zr–C co-presence","ZrC: very high Tm (~3420 K), extremely hard carbide","Melting point ↑↑","Re-entry ceramics, rocket nozzle inserts"],
+  ["Zr–B co-presence","ZrB₂: UHTM industry standard — oxidation resistant boride","Melting point ↑↑, OxRes ↑","Hypersonic leading edges, sharp aerodynamic geometries"],
+  ["Zr–N co-presence","ZrN: hard gold coating, wear-resistant. +700 K model boost.","Melting point ↑, Hardness ↑","Wear coatings, turbine hard-face, cutting tools"],
+  ["Zr–Si co-presence","ZrSi silicide: moderate Tm, good oxidation resistance","OxRes ↑","Thermal barrier coatings, oxidation protection"],
+  ["Ta–Nb co-presence","Group V pair — classic superalloy combination with very high Tm","Melting point ↑↑","Turbine blades, rocket nozzles, hot-section alloys"],
+  ["Ta–Ti co-presence","Adds ductility to high-Tm Ta base via entropy mixing","Toughness ↑","Structural re-entry, ductile nozzle alloys"],
+  ["Ta–C co-presence","TaC: second-highest-Tm compound (~3985 K). +900 K model boost.","Melting point ↑↑↑","Rocket throat liners, missile nose tips, re-entry edges"],
+  ["Ta–B co-presence","TaB₂: ultra-high-Tm boride, oxidation resistant","Melting point ↑↑","Hypersonic leading edges, nose tips"],
+  ["Ta–N co-presence","TaN: hard refractory nitride, diffusion barrier","Hardness ↑","Wear coatings, diffusion barriers in electronics"],
+  ["Ta–Si co-presence","TaSi silicide: high-Tm oxidation barrier material","OxRes ↑","High-temperature oxidation-resistant coatings"],
+  ["Nb–Ti co-presence","Nb–Ti: lightweight turbine alloy, also superconducting pair","Toughness ↑","Turbine blades, lightweight structural aerospace"],
+];
+pairs22.forEach(([e1,e2],k)=>{
+  const [ph,wh,tg,ap]=pairData[k];
+  push(`R_${String(k+18).padStart(2,'0')}`,"Roost B2 — Pair interaction",ph,wh,tg,ap);
+});
+
+const b3=[
+  ["Tm-weighted projection 0","Dominant overall Tm signal — strongest SHAP predictor in the whole model","Melting point ↑↑","Re-entry shields, rocket nozzles — material survival screening"],
+  ["Tm-weighted projection 1","Second Tm linear combination — different element emphasis","Melting point ↑↑","Hypersonic nose cones, leading edge materials"],
+  ["Tm-weighted projection 2","Tm signal weighted toward high-EN elements","Melting point + EN","Hypersonic structures needing both heat and oxidation resistance"],
+  ["Tm-weighted projection 3","Tm + VEC combined — encodes creep resistance alongside Tm","Melting point + Toughness","Turbine blades: need high Tm and crack resistance simultaneously"],
+  ["Tm-weighted projection 4","Emphasises carbide-forming element (C-rich) signal","Melting point ↑ carbides","Rocket throat inserts, re-entry ceramic leading edges"],
+  ["Tm-weighted projection 5","Balances refractory metal Tm contributions","Melting point ↑","General refractory alloy ranking"],
+  ["Tm-weighted projection 6","Tm projection capturing Hf/Ta dominance","Melting point ↑↑","Re-entry and missile nose tip screening"],
+  ["Tm-weighted projection 7","Tm projection capturing Nb/Zr contributions","Melting point ↑","Turbine and nuclear material screening"],
+  ["Tm-weighted projection 8","Mixed Tm — sensitive to Ti additions (entropy trade-off)","Melting point, Toughness","Structural hypersonic components"],
+  ["Tm-weighted projection 9","Tm-weighted with B/N/Si contrast","Melting point vs OxRes","Coatings that must also survive high temperature"],
+  ["EN-weighted projection 0","Electronegativity spread — primary driver of oxide formation kinetics","OxRes ↑","Sustained hypersonic flight, jet combustor liners"],
+  ["EN-weighted projection 1","EN pattern emphasising Si/B vs metals","OxRes ↑","Self-healing oxidation coatings"],
+  ["EN-weighted projection 2","EN + Tm combined — dual protection screening","OxRes + Tm","Hypersonic fairings needing heat and oxidation resistance"],
+  ["EN-weighted projection 3","EN spread: nitride-formation tendency","OxRes + Hardness","Turbine hard-face coatings, wear-resistant layers"],
+  ["EN-weighted projection 4","EN interactions: ionic vs metallic bonding balance","OxRes ↑","Oxidation-resistant structural ceramics"],
+  ["EN-weighted projection 5","EN pattern: corrosion resistance in nuclear environments","OxRes ↑","Nuclear cladding, reactor hot-section materials"],
+  ["EN-weighted projection 6","EN interactions: glassy oxide formation (B,Si)","OxRes ↑↑","Self-sealing coatings for hypersonic vehicles"],
+  ["EN-weighted projection 7","EN spread capturing N-rich compositions","OxRes + Hardness","Hard nitride coatings, cutting tools"],
+  ["EN-weighted projection 8","EN signal: protective scale stability","OxRes ↑","Long-duration hypersonic flight protection"],
+  ["EN-weighted projection 9","EN pattern: mixed oxide/nitride system","OxRes + Hardness","Multi-functional protective coatings"],
+  ["VEC-weighted projection 0","Valence electron balance — metallic bonding strength","Toughness ↑","Turbine blades: ductility under high cyclic mechanical load"],
+  ["VEC-weighted projection 1","VEC pattern: ductile vs brittle boundary signal","Toughness ↑","Fighter jet structures, compressor blade alloys"],
+  ["VEC-weighted projection 2","VEC + Tm — creep resistance proxy for high-temp use","Toughness + Tm","High-temperature turbine blades, hot-section structural parts"],
+  ["VEC-weighted projection 3","VEC spread — entropy + bonding balance","Toughness ↑","Multi-element alloys for thermal shock resistance (re-entry tiles)"],
+  ["VEC-weighted projection 4","VEC: carbide/nitride vs metal bonding contrast","Hardness + Toughness","Hard yet tough coatings — TiN-type applications"],
+  ["VEC-weighted projection 5","VEC pattern emphasising Group V elements (Ta,Nb,N)","Toughness + Melting point","Superalloy turbine blades, high-strength hot structures"],
+  ["VEC-weighted projection 6","VEC projection: mixed metal-ceramic systems","All targets","Composite thermal protection — combined structural and ceramic layers"],
+  ["VEC-weighted projection 7","VEC + EN combined — bonding + reactivity balance","Toughness + OxRes","Oxidation-resistant structural alloys"],
+  ["VEC-weighted projection 8","VEC signal: optimal for carbide toughness","Toughness ↑","Tough carbide ceramics for re-entry and hypersonic"],
+  ["VEC-weighted projection 9","All-property combined: Tm + EN + VEC holistic score","All three targets","General inverse design input — Bayesian optimisation seed"],
+  ["Tm+EN+VEC combined projection 0","Holistic all-property signal — top SHAP rank features","All three targets","Universal material screening: single-score ranking for any aerospace application"],
+  ["Tm+EN+VEC combined projection 1","All-property projection — optimisation input 1","All three targets","Bayesian optimisation (BoTorch qNEHVI) Pareto front input"],
+  ["Tm+EN+VEC combined projection 2","All-property projection — optimisation input 2","All three targets","Genetic algorithm composition search input"],
+  ["Tm+EN+VEC combined projection 3","All-property projection — optimisation input 3","All three targets","Surrogate model training feature"],
+  ["Tm+EN+VEC combined projection 4","All-property projection — optimisation input 4","All three targets","Multi-objective design: re-entry (Tm) + hypersonic (OxRes) + turbine (Toughness)"],
+  ["Tm+EN+VEC combined projection 5","All-property projection — optimisation input 5","All three targets","Inverse design: propose next composition to synthesise"],
+  ["Tm+EN+VEC combined projection 6","All-property projection — optimisation input 6","All three targets","SHAP-selected top-25 feature — highest predictive value"],
+  ["Tm+EN+VEC combined projection 7","All-property projection — optimisation input 7","All three targets","Downstream ML surrogate for rapid alloy screening"],
+  ["Tm+EN+VEC combined projection 8","All-property projection — optimisation input 8","All three targets","Composition optimisation for multi-mission platforms"],
+  ["Tm+EN+VEC combined projection 9","All-property projection — optimisation input 9","All three targets","Pareto front: explore Tm vs OxRes vs Toughness trade-offs"],
+];
+for(let r=0;r<30;r++){
+  const [ph,wh,tg,ap]=b3[r]||[`Projection ${r}`,"Mixed Tm/EN/VEC signal","All three targets","General material screening"];
+  push(`R_${String(r+40).padStart(2,'0')}`,"Roost B3 — Tm/EN/VEC projection",ph,wh,tg,ap);
+}
+
+const mbBands=[
+  [0,9,"Primary semantic axis","Metallic vs non-metallic character — dominant compositional identity","All targets","High-level material family classification: metal-like (turbines) vs ceramic-like (re-entry)"],
+  [10,19,"Secondary semantic axis","Electronegativity and atomic radius contrast patterns from literature","OxRes, Toughness","Oxidation behaviour and toughness discrimination — data-driven, not formula-derived"],
+  [20,39,"Tertiary semantic axis","Compositional fingerprint — distinguishes carbide vs nitride vs boride families","All targets","Compound-type classification: directs toward carbide (high Tm) or boride (OxRes) or nitride (hardness) families"],
+  [40,69,"Residual / noise axis","Formula-specific noise from MatBERT perturbation — low signal","Low SHAP, mostly pruned","Mostly removed by VIF pruning. Surviving columns provide minor refinement only; negligible application impact"],
+];
+mbBands.forEach(([s,e,ph,wh,tg,ap])=>{
+  for(let i=s;i<=e;i++) push(`M_${String(i).padStart(2,'0')}`,"MatBERT PCA",`${ph} ${i+1}`,wh,tg,ap);
+});
+
+const allGroups=[...new Set(DATA.map(d=>d.group))];
+let active=new Set(allGroups);
+
+const filterDiv=document.getElementById('filters');
+const groupCls=g=>{
+  if(g==="Identity") return "g0";
+  if(g==="Composition") return "g1";
+  if(g==="Target") return "g2";
+  if(g==="Diagnostic") return "g3";
+  if(g.includes("B1a")) return "g4";
+  if(g.includes("B1b")) return "g4";
+  if(g.includes("B2")) return "g5";
+  if(g.includes("B3")) return "g6";
+  if(g.includes("MatBERT")) return "g7";
+  return "g6";
+};
+const groupShort=g=>{
+  if(g==="Identity") return "Identity";
+  if(g==="Composition") return "Composition (x_*)";
+  if(g==="Target") return "Targets";
+  if(g==="Diagnostic") return "Diagnostics";
+  if(g.includes("B1a")) return "R: raw fractions";
+  if(g.includes("B1b")) return "R: self-interact";
+  if(g.includes("B2")) return "R: pair interact";
+  if(g.includes("B3")) return "R: Tm/EN/VEC proj";
+  if(g.includes("MatBERT")) return "MatBERT PCA";
+  return g;
+};
+
+const seen=new Set();
+allGroups.forEach(g=>{
+  const short=groupShort(g);
+  if(seen.has(short)) return;
+  seen.add(short);
+  const btn=document.createElement('div');
+  btn.className=`fp ${groupCls(g)} on`;
+  btn.textContent=short;
+  btn.dataset.groups=allGroups.filter(x=>groupShort(x)===short).join('|');
+  btn.onclick=function(){
+    const grps=this.dataset.groups.split('|');
+    const isOn=this.classList.contains('on');
+    if(isOn){grps.forEach(x=>active.delete(x));this.classList.remove('on');}
+    else{grps.forEach(x=>active.add(x));this.classList.add('on');}
+    render();
+  };
+  filterDiv.appendChild(btn);
+});
+
+function render(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML='';
+  let count=0;
+  DATA.forEach(row=>{
+    if(!active.has(row.group)) return;
+    if(q&&![row.col,row.group,row.physical,row.what,row.target,row.app].some(s=>s.toLowerCase().includes(q))) return;
+    count++;
+    const tr=document.createElement('tr');
+    const cls=groupCls(row.group);
+    tr.innerHTML=`
+      <td><span class="code">${row.col}</span></td>
+      <td><span class="grp-pill ${cls}-bg">${groupShort(row.group)}</span></td>
+      <td><span class="physical">${row.physical}</span></td>
+      <td><span class="what-text">${row.what}</span></td>
+      <td><span class="tgt-pill">${row.target}</span></td>
+      <td><span class="app-text">${row.app}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('cnt').textContent=`${count} of ${DATA.length} columns`;
+}
+render();
+</script>

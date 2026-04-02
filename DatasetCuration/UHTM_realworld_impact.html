@@ -1,0 +1,264 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ui-bg:var(--vscode-editor-background,var(--color-background-primary,#0f1117));
+  --ui-surface:var(--vscode-sideBar-background,var(--color-background-primary,#161a22));
+  --ui-surface-2:var(--vscode-editorWidget-background,var(--color-background-secondary,#1c2230));
+  --ui-text:var(--vscode-foreground,var(--color-text-primary,#e6edf3));
+  --ui-text-muted:var(--vscode-descriptionForeground,var(--color-text-secondary,#a7b0bf));
+  --ui-border:var(--vscode-panel-border,var(--color-border-tertiary,#2b3340));
+  --ui-border-strong:var(--vscode-contrastBorder,var(--color-border-secondary,#3a4658));
+}
+body{font-family:var(--font-sans,Inter,Segoe UI,system-ui,-apple-system,sans-serif);background:var(--ui-bg);color:var(--ui-text)}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 40px}
+.page-title{font-size:28px;line-height:1.2;font-weight:700;color:var(--ui-text);margin-bottom:6px}
+.page-sub{font-size:14px;line-height:1.55;color:var(--ui-text-muted);margin-bottom:14px}
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 16px 0}
+.scard{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px 12px}
+.scard-val{font-size:18px;font-weight:700;color:var(--ui-text)}
+.scard-lbl{font-size:11px;color:var(--ui-text-muted);margin-top:2px}
+
+.scene{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:14px;padding:14px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.scene-card{background:var(--ui-surface-2);border:1px solid var(--ui-border);border-radius:10px;padding:14px 14px 12px;cursor:pointer;transition:border-color .15s,transform .15s}
+.scene-card:hover,.scene-card.active{border-color:var(--ui-border-strong);transform:translateY(-1px)}
+.scene-card.active .sc-name{font-weight:600}
+.sc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.sc-name{font-size:15px;color:var(--ui-text);margin-bottom:3px}
+.sc-temp{font-size:12px;color:var(--ui-text-muted)}
+
+.detail{display:none}.detail.active{display:block}
+
+.env-strip{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.env-pill{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--ui-border);color:var(--ui-text-muted);background:var(--ui-surface)}
+.env-pill span{font-weight:600;color:var(--ui-text)}
+
+.chains{display:flex;flex-direction:column;gap:14px}
+.chain{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:12px;overflow:hidden}
+.chain-header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--ui-border)}
+.ch-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ch-feat{font-size:13px;font-weight:600;color:var(--ui-text)}
+.ch-code{font-family:var(--font-mono,ui-monospace,Menlo,monospace);font-size:11px;padding:2px 6px;border-radius:4px;background:var(--ui-surface-2);border:1px solid var(--ui-border);color:var(--ui-text-muted);margin-left:auto}
+.chain-body{padding:12px 14px;display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr;align-items:center;gap:0}
+.cb-box{padding:8px 10px;border-radius:8px;border:1px solid var(--ui-border);background:var(--ui-surface-2)}
+.cb-label{font-size:11px;font-weight:700;color:var(--ui-text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.cb-val{font-size:13px;color:var(--ui-text)}
+.cb-arrow{text-align:center;font-size:16px;color:var(--ui-text-muted)}
+.cb-outcome{font-size:13px;color:var(--ui-text)}
+.cb-risk{font-size:11px;margin-top:3px}
+.risk-high{color:#A32D2D}.risk-med{color:#854F0B}.risk-low{color:#3B6D11}
+
+.summary-box{margin-top:20px;padding:14px 16px;border-radius:12px;border:1px solid var(--ui-border);background:var(--ui-surface)}
+.sb-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ui-text-muted);margin-bottom:10px}
+.sb-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px}
+.sb-row:last-child{margin-bottom:0}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.sb-text{color:var(--ui-text-muted);line-height:1.5}
+.sb-text strong{color:var(--ui-text);font-weight:600}
+
+.bg-coral-l{background:#FAECE7}.bg-amber-l{background:#FAEEDA}.bg-blue-l{background:#E6F1FB}
+.bg-teal-l{background:#E1F5EE}.bg-purple-l{background:#EEEDFE}.bg-green-l{background:#EAF3DE}
+@media(prefers-color-scheme:dark){
+  .bg-coral-l{background:#4A1B0C}.bg-amber-l{background:#412402}.bg-blue-l{background:#042C53}
+  .bg-teal-l{background:#04342C}.bg-purple-l{background:#26215C}.bg-green-l{background:#173404}
+}
+.dot-red{background:#E24B4A}.dot-amber{background:#EF9F27}.dot-blue{background:#378ADD}
+.dot-teal{background:#1D9E75}.dot-purple{background:#7F77DD}.dot-green{background:#639922}
+
+@media (max-width:980px){
+  .summary-strip{grid-template-columns:repeat(2,1fr)}
+  .scene{grid-template-columns:1fr}
+  .chain-body{grid-template-columns:1fr;gap:8px}
+  .cb-arrow{transform:rotate(90deg)}
+}
+
+@media (max-width:620px){
+  .page-title{font-size:22px}
+  .page-sub{font-size:13px}
+  .summary-strip{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+
+<div class="page-title">UHTM Real-World Impact Map</div>
+<div class="page-sub">Feature-to-decision traceability across re-entry vehicles, hypersonic systems, and fighter-jet engine environments.</div>
+<div class="summary-strip">
+  <div class="scard"><div class="scard-val">3</div><div class="scard-lbl">Operational scenarios</div></div>
+  <div class="scard"><div class="scard-val">9</div><div class="scard-lbl">Feature-impact chains</div></div>
+  <div class="scard"><div class="scard-val">700</div><div class="scard-lbl">Candidate compositions</div></div>
+  <div class="scard"><div class="scard-val">Target-linked</div><div class="scard-lbl">Tm · OxRes · Toughness</div></div>
+</div>
+
+<div class="scene">
+  <div class="scene-card active" onclick="pick(0,this)">
+    <div class="sc-icon bg-coral-l"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 16L10 4l8 12H2z" stroke="#D85A30" stroke-width="1.2" fill="#FAECE7"/><path d="M10 4L18 16" stroke="#D85A30" stroke-width="1.2"/></svg></div>
+    <div class="sc-name">Re-entry vehicle</div>
+    <div class="sc-temp">Surface: up to 3000 K</div>
+  </div>
+  <div class="scene-card" onclick="pick(1,this)">
+    <div class="sc-icon bg-amber-l"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 14L10 3l7 11H3z" stroke="#BA7517" stroke-width="1.2" fill="#FAEEDA"/><line x1="10" y1="14" x2="10" y2="17" stroke="#BA7517" stroke-width="1.5"/></svg></div>
+    <div class="sc-name">Hypersonic missile</div>
+    <div class="sc-temp">Nose cone: ~2500 K</div>
+  </div>
+  <div class="scene-card" onclick="pick(2,this)">
+    <div class="sc-icon bg-blue-l"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="12" rx="8" ry="4" stroke="#185FA5" stroke-width="1.2" fill="#E6F1FB"/><path d="M4 12L10 5l6 7" stroke="#185FA5" stroke-width="1.2" fill="none"/></svg></div>
+    <div class="sc-name">Fighter jet engine</div>
+    <div class="sc-temp">Turbine blades: ~1800 K</div>
+  </div>
+</div>
+
+<div id="d0" class="detail active">
+  <div class="env-strip">
+    <div class="env-pill">Speed <span>Mach 25</span></div>
+    <div class="env-pill">Duration <span>8–25 min descent</span></div>
+    <div class="env-pill">Peak heat <span>~3000 K</span></div>
+    <div class="env-pill">Atmosphere <span>oxidising plasma</span></div>
+    <div class="env-pill">Failure mode <span>ablation, cracking, burnthrough</span></div>
+  </div>
+  <div class="chains">
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-red"></div><div class="ch-feat">Melting point (Tm_K)</div><div class="ch-code">R_40–R_69 · x_Hf · x_Ta · x_C</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-coral-l"><div class="cb-label">Feature says</div><div class="cb-val">HfC/TaC-rich mix → Tm ~3500–3800 K</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Material survives peak re-entry temperature</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Heat shield stays solid. Capsule survives.</div><div class="cb-risk risk-low">Low failure risk</div></div>
+      </div>
+    </div>
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-amber"></div><div class="ch-feat">Oxidation resistance (OxRes)</div><div class="ch-code">x_Si · x_B · EN spread</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-amber-l"><div class="cb-label">Feature says</div><div class="cb-val">Low Si/B → OxRes near 0 in plasma</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Surface oxidises rapidly, eroding thickness</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Add Si: forms SiO₂ glassy barrier layer</div><div class="cb-risk risk-med">Manageable with coating</div></div>
+      </div>
+    </div>
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-blue"></div><div class="ch-feat">Toughness proxy</div><div class="ch-code">Mixing entropy × VEC</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-blue-l"><div class="cb-label">Feature says</div><div class="cb-val">Low entropy (2-element) → brittle</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Thermal shock cracks tile on re-entry vibration</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Multi-element mix raises entropy, absorbs shock</div><div class="cb-risk risk-low">Solved by composition design</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="summary-box">
+    <div class="sb-title">How this drives material selection</div>
+    <div class="sb-row"><div class="sb-dot dot-red"></div><div class="sb-text">The model ranks all 700 compounds by <strong>Tm_K first</strong> — anything below 3000 K is eliminated immediately for re-entry use.</div></div>
+    <div class="sb-row"><div class="sb-dot dot-amber"></div><div class="sb-text"><strong>OxRes filters the survivors</strong> — a high-Tm compound that oxidises away in seconds is useless in plasma. Si and B fractions must be tuned.</div></div>
+    <div class="sb-row"><div class="sb-dot dot-blue"></div><div class="sb-text"><strong>Toughness breaks ties</strong> — among equally heat- and oxidation-resistant candidates, the one with higher mixing entropy (more elements, higher VEC) is preferred because it won't crack under acoustic loads during descent.</div></div>
+  </div>
+</div>
+
+<div id="d1" class="detail">
+  <div class="env-strip">
+    <div class="env-pill">Speed <span>Mach 5–10</span></div>
+    <div class="env-pill">Duration <span>sustained flight, minutes</span></div>
+    <div class="env-pill">Peak heat <span>~2000–2600 K</span></div>
+    <div class="env-pill">Atmosphere <span>oxidising, high pressure</span></div>
+    <div class="env-pill">Failure mode <span>nose erosion, fin cracking</span></div>
+  </div>
+  <div class="chains">
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-amber"></div><div class="ch-feat">Melting point (Tm_K)</div><div class="ch-code">x_Hf × x_C interaction (R_22) · R_40–69</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-amber-l"><div class="cb-label">Feature says</div><div class="cb-val">Hf–C pair interaction high → Tm boost +800 K</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Nose cone stays solid through sustained Mach 8 flight</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Nose geometry preserved. Aerodynamics stable.</div><div class="cb-risk risk-low">Structurally safe</div></div>
+      </div>
+    </div>
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-teal"></div><div class="ch-feat">Oxidation resistance</div><div class="ch-code">x_Si · x_B (R_06, R_08)</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-teal-l"><div class="cb-label">Feature says</div><div class="cb-val">Moderate Si fraction → OxRes ~0.4</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Surface oxidises slowly — manageable over flight time</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Acceptable mass loss. Mission range not compromised.</div><div class="cb-risk risk-med">Monitor carefully</div></div>
+      </div>
+    </div>
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-purple"></div><div class="ch-feat">Binary pair interactions</div><div class="ch-code">R_19 (Hf–Ta) · R_35 (Ta–C)</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-purple-l"><div class="cb-label">Feature says</div><div class="cb-val">Hf–Ta and Ta–C both present → phase stability</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">No phase separation under thermal cycling</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Fins stay intact through manoeuvres and vibration</div><div class="cb-risk risk-low">Phase-stable</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="summary-box">
+    <div class="sb-title">How this drives material selection</div>
+    <div class="sb-row"><div class="sb-dot dot-amber"></div><div class="sb-text">Unlike re-entry, hypersonic missiles endure <strong>sustained heat for minutes</strong>, not seconds — so steady-state oxidation resistance matters more than peak Tm.</div></div>
+    <div class="sb-row"><div class="sb-dot dot-teal"></div><div class="sb-text">The <strong>Hf–C and Ta–C binary interaction features</strong> (R_22, R_35) are especially important here — they directly encode the bonding pairs responsible for the highest Tm boosts.</div></div>
+    <div class="sb-row"><div class="sb-dot dot-purple"></div><div class="sb-text">The <strong>gap-flagged compounds</strong> (LitTheory_Gap_Flag=1) are priority targets — these 140 compositions are where physics theory and literature disagree most, meaning <strong>untested high performers may hide here</strong>.</div></div>
+  </div>
+</div>
+
+<div id="d2" class="detail">
+  <div class="env-strip">
+    <div class="env-pill">Component <span>turbine blades, combustor</span></div>
+    <div class="env-pill">Operating temp <span>1600–1900 K</span></div>
+    <div class="env-pill">Atmosphere <span>oxidising combustion gas</span></div>
+    <div class="env-pill">Cycling <span>thousands of on/off cycles</span></div>
+    <div class="env-pill">Failure mode <span>creep, fatigue, spallation</span></div>
+  </div>
+  <div class="chains">
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-blue"></div><div class="ch-feat">Toughness (fracture resistance)</div><div class="ch-code">Mixing entropy × VEC / x_* fractions</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-blue-l"><div class="cb-label">Feature says</div><div class="cb-val">5-element mix → high entropy → Toughness ~1.2</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Blade survives thermal fatigue over 1000s of cycles</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">No crack initiation. Longer service life.</div><div class="cb-risk risk-low">Fatigue-resistant</div></div>
+      </div>
+    </div>
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-green"></div><div class="ch-feat">Valence electron count (VEC)</div><div class="ch-code">R_40–69 via x·VEC/6 weighting</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-green-l"><div class="cb-label">Feature says</div><div class="cb-val">Mean VEC ~4.5 → optimal metallic bonding</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Ductile enough to not shatter, stiff enough to not creep</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Blade holds shape under centrifugal load at 1800 K</div><div class="cb-risk risk-low">Creep-resistant</div></div>
+      </div>
+    </div>
+    <div class="chain">
+      <div class="chain-header"><div class="ch-dot dot-amber"></div><div class="ch-feat">Oxidation resistance + EN spread</div><div class="ch-code">x_Si · x_B · std(EN) → OxRes</div></div>
+      <div class="chain-body">
+        <div class="cb-box bg-amber-l"><div class="cb-label">Feature says</div><div class="cb-val">High EN mismatch → protective oxide forms fast</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Model predicts</div><div class="cb-val">Self-healing oxide layer prevents mass loss during operation</div></div>
+        <div class="cb-arrow">→</div>
+        <div class="cb-box"><div class="cb-label">Outcome</div><div class="cb-outcome">Engine efficiency maintained over full service life</div><div class="cb-risk risk-low">Self-protecting</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="summary-box">
+    <div class="sb-title">How this drives material selection</div>
+    <div class="sb-row"><div class="sb-dot dot-blue"></div><div class="sb-text">Jet engines are a <strong>multi-objective problem</strong> — the model's three targets (Tm, OxRes, Toughness) must all be high simultaneously. No single target wins.</div></div>
+    <div class="sb-row"><div class="sb-dot dot-green"></div><div class="sb-text">The <strong>VEC-weighted Block 3 features</strong> (R_40–69) are the most SHAP-important here because they encode how much each element contributes to the metallic bond strength — directly linked to creep resistance.</div></div>
+    <div class="sb-row"><div class="sb-dot dot-amber"></div><div class="sb-text">The <strong>inverse design dataset (Step 6)</strong> feeds directly into Bayesian optimisation — the ML model suggests which new composition to test next, avoiding thousands of expensive lab experiments.</div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function pick(i, el) {
+  document.querySelectorAll('.scene-card').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.detail').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('d'+i).classList.add('active');
+}
+</script>

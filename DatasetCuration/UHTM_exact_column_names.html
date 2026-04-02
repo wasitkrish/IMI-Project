@@ -1,0 +1,228 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ui-bg:var(--vscode-editor-background,var(--color-background-primary,#0f1117));
+  --ui-surface:var(--vscode-sideBar-background,var(--color-background-primary,#161a22));
+  --ui-surface-2:var(--vscode-editorWidget-background,var(--color-background-secondary,#1c2230));
+  --ui-text:var(--vscode-foreground,var(--color-text-primary,#e6edf3));
+  --ui-text-muted:var(--vscode-descriptionForeground,var(--color-text-secondary,#a7b0bf));
+  --ui-border:var(--vscode-panel-border,var(--color-border-tertiary,#2b3340));
+  --ui-border-strong:var(--vscode-contrastBorder,var(--color-border-secondary,#3a4658));
+}
+body{background:var(--ui-bg)}
+.root{max-width:1200px;margin:0 auto;padding:24px 16px 36px;font-family:var(--font-sans,Inter,Segoe UI,system-ui,-apple-system,sans-serif);color:var(--ui-text)}
+.page-title{font-size:28px;line-height:1.2;font-weight:700;color:var(--ui-text);margin-bottom:6px}
+.page-sub{font-size:14px;line-height:1.5;color:var(--ui-text-muted);margin-bottom:14px}
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.scard{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:10px;padding:10px 12px}
+.scard-val{font-size:20px;font-weight:700;color:var(--ui-text)}
+.scard-lbl{font-size:11px;color:var(--ui-text-muted);margin-top:2px}
+
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:8px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface)}
+.tab{padding:8px 12px;font-size:13px;cursor:pointer;color:var(--ui-text-muted);border:1px solid transparent;border-radius:8px;background:transparent;transition:all .12s;white-space:nowrap}
+.tab:hover{color:var(--ui-text);background:var(--ui-surface-2);border-color:var(--ui-border)}
+.tab.active{color:var(--ui-text);font-weight:600;background:var(--ui-surface-2);border-color:var(--ui-border-strong)}
+.panel{display:none;padding-top:12px}.panel.active{display:block}
+
+.table-wrap{border:1px solid var(--ui-border);border-radius:12px;overflow:auto;background:var(--ui-surface)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px}
+th{text-align:left;padding:9px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ui-text-muted);border-bottom:1px solid var(--ui-border);background:var(--ui-surface-2);white-space:nowrap;position:sticky;top:0;z-index:1}
+td{padding:9px 10px;border-bottom:1px solid var(--ui-border);vertical-align:middle;line-height:1.45}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--ui-surface-2)}
+
+.code{font-family:var(--font-mono,ui-monospace,Menlo,monospace);font-size:12px;color:var(--ui-text);white-space:nowrap}
+.name{font-size:13px;color:var(--ui-text);font-weight:600}
+.formula{font-family:var(--font-mono,ui-monospace,Menlo,monospace);font-size:11px;color:var(--ui-text-muted)}
+.unit{font-size:11px;color:var(--ui-text-muted);white-space:nowrap}
+.phys{font-size:12px;color:var(--ui-text-muted)}
+
+.pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;white-space:nowrap;margin-right:4px}
+.p-frac{background:#E6F1FB;color:#185FA5}
+.p-sq{background:#EEEDFE;color:#534AB7}
+.p-pair{background:#E1F5EE;color:#0F6E56}
+.p-tm{background:#FAEEDA;color:#854F0B}
+.p-en{background:#FAECE7;color:#993C1D}
+.p-vec{background:#EAF3DE;color:#3B6D11}
+.p-pca{background:#F1EFE8;color:#5F5E5A}
+.p-tgt{background:#FAEEDA;color:#854F0B}
+.p-id{background:#EEEDFE;color:#534AB7}
+.p-diag{background:#FAECE7;color:#993C1D}
+
+@media(prefers-color-scheme:dark){
+  .p-frac{background:#042C53;color:#85B7EB}
+  .p-sq{background:#26215C;color:#CECBF6}
+  .p-pair{background:#04342C;color:#9FE1CB}
+  .p-tm{background:#412402;color:#FAC775}
+  .p-en{background:#4A1B0C;color:#F5C4B3}
+  .p-vec{background:#173404;color:#C0DD97}
+  .p-pca{background:#2C2C2A;color:#D3D1C7}
+  .p-tgt{background:#412402;color:#FAC775}
+  .p-id{background:#26215C;color:#CECBF6}
+  .p-diag{background:#4A1B0C;color:#F5C4B3}
+}
+
+.section-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ui-text-muted);padding:12px 10px 7px;border-bottom:1px solid var(--ui-border);background:var(--ui-surface-2)}
+
+@media (max-width:920px){
+  .root{padding:20px 12px 30px}
+  .page-title{font-size:24px}
+  .summary-strip{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:620px){
+  .page-title{font-size:21px}
+  .page-sub{font-size:13px}
+  .summary-strip{grid-template-columns:1fr}
+}
+</style>
+
+<div class="root">
+<div class="page-title">UHTM Exact Column Names Map</div>
+<div class="page-sub">Precise feature identifiers and formulas used by the model after curation and pruning.</div>
+<div class="summary-strip">
+  <div class="scard"><div class="scard-val">140</div><div class="scard-lbl">Mapped columns</div></div>
+  <div class="scard"><div class="scard-val">6</div><div class="scard-lbl">View tabs</div></div>
+  <div class="scard"><div class="scard-val">R_00–R_69</div><div class="scard-lbl">Roost feature space</div></div>
+  <div class="scard"><div class="scard-val">M_00–M_69</div><div class="scard-lbl">MatBERT PCA space</div></div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="show('all',this)">All (140)</div>
+  <div class="tab" onclick="show('identity',this)">Identity & Targets</div>
+  <div class="tab" onclick="show('b1',this)">R_00–17 Fractions</div>
+  <div class="tab" onclick="show('b2',this)">R_18–39 Pairs</div>
+  <div class="tab" onclick="show('b3',this)">R_40–69 Projections</div>
+  <div class="tab" onclick="show('mb',this)">M_00–69 MatBERT</div>
+</div>
+
+<div id="p-all" class="panel active"><div class="table-wrap"><table id="t-all"></table></div></div>
+<div id="p-identity" class="panel"><div class="table-wrap"><table id="t-identity"></table></div></div>
+<div id="p-b1" class="panel"><div class="table-wrap"><table id="t-b1"></table></div></div>
+<div id="p-b2" class="panel"><div class="table-wrap"><table id="t-b2"></table></div></div>
+<div id="p-b3" class="panel"><div class="table-wrap"><table id="t-b3"></table></div></div>
+<div id="p-mb" class="panel"><div class="table-wrap"><table id="t-mb"></table></div></div>
+</div>
+
+<script>
+const EL = ["Hf","Zr","Ta","Nb","Ti","C","B","N","Si"];
+const TM = {Hf:2506,Zr:2128,Ta:3290,Nb:2750,Ti:1941,C:3823,B:2349,N:77,Si:1687};
+const EN = {Hf:1.30,Zr:1.33,Ta:1.50,Nb:1.60,Ti:1.54,C:2.55,B:2.04,N:3.04,Si:1.90};
+const VEC= {Hf:4,Zr:4,Ta:5,Nb:5,Ti:4,C:4,B:3,N:5,Si:4};
+
+// Build all rows
+const rows = [];
+
+// Identity
+rows.push({group:'Identity & Targets', code:'Formula', pill:'p-id', name:'Formula string', physName:'Stoichiometric formula', formula:'e.g. Hf0.312Ta0.421C0.267', unit:'—', desc:'Element symbols + mole fractions, sorted alphabetically'});
+
+// Composition
+EL.forEach(el=>{
+  rows.push({group:'Identity & Targets', code:`x_${el}`, pill:'p-frac', name:`Mole fraction of ${el}`, physName:'Composition', formula:`x_${el} ∈ [0,1], Σ=1`, unit:'dimensionless', desc:`Dirichlet-sampled fraction of ${el}`});
+});
+
+// Targets
+rows.push({group:'Identity & Targets', code:'Tm_K', pill:'p-tgt', name:'Melting point', physName:'Melting point', formula:'Σ xᵢ·Tₘᵢ + Σ xᵢxⱼΔTₘᵢⱼ', unit:'K', desc:'Rule-of-mixtures + Hf–C(+800K), Ta–C(+900K), Zr–N(+700K) boosts'});
+rows.push({group:'Identity & Targets', code:'OxRes', pill:'p-tgt', name:'Oxidation resistance', physName:'Oxidation resistance', formula:'clip(1.5(x_Si+x_B)+0.4·σ(EN)−0.1, 0,1)', unit:'[0,1]', desc:'High Si/B content + electronegativity spread improves oxidation resistance'});
+rows.push({group:'Identity & Targets', code:'Toughness', pill:'p-tgt', name:'Fracture toughness proxy', physName:'Toughness', formula:'−Σ xᵢln(xᵢ) × (Σ xᵢ·VECᵢ/6)', unit:'~0–1.5', desc:'Mixing entropy × normalised mean valence electron count'});
+rows.push({group:'Identity & Targets', code:'Roost_MatBERT_CosineSim', pill:'p-diag', name:'Encoder cosine similarity', physName:'Literature–theory gap', formula:'v_Roost·v_MatBERT / (‖v_Roost‖·‖v_MatBERT‖)', unit:'[−1,1]', desc:'Near 0 = encoders orthogonal (good). Low = candidate for DFT validation'});
+rows.push({group:'Identity & Targets', code:'LitTheory_Gap_Flag', pill:'p-diag', name:'Gap flag (bottom 20%)', physName:'DFT priority flag', formula:'1 if CosineSim < P₂₀ else 0', unit:'{0,1}', desc:'140 of 700 compounds flagged as high-priority for experimental validation'});
+
+// Block 1a – raw fractions
+EL.forEach((el,i)=>{
+  rows.push({group:'Roost Block 1a — Raw mole fractions', code:`R_${String(i).padStart(2,'0')}`, pill:'p-frac', name:`Mole fraction — ${el}`, physName:`x(${el})`, formula:`x_${el}`, unit:'[0,1]', desc:`Direct copy of the composition variable for ${el}`});
+});
+
+// Block 1b – squared
+EL.forEach((el,i)=>{
+  rows.push({group:'Roost Block 1b — Self-interaction (squared)', code:`R_${String(i+9).padStart(2,'0')}`, pill:'p-sq', name:`${el} self-interaction`, physName:`x(${el})²`, formula:`x_${el}²`, unit:'[0,1]', desc:`Squared fraction — captures single-element dominance in the compound`});
+});
+
+// Block 2 – pairs
+const pairs=[];
+EL.forEach((e1,i)=>EL.forEach((e2,j)=>{if(j>i)pairs.push([e1,e2])}));
+pairs.slice(0,22).forEach(([e1,e2],k)=>{
+  rows.push({group:'Roost Block 2 — Binary pair interactions', code:`R_${String(k+18).padStart(2,'0')}`, pill:'p-pair', name:`${e1}–${e2} interaction`, physName:`x(${e1})·x(${e2})`, formula:`x_${e1} × x_${e2}`, unit:'[0,1]', desc:`Pairwise product — encodes co-presence of ${e1} and ${e2} in the compound`});
+});
+
+// Block 3 – projections
+for(let r=0;r<30;r++){
+  const idx=r+40;
+  // Describe which property groups are mixed
+  let desc='Linear combination of: ';
+  desc+='(Tm-weighted fractions of all 9 elements) + (EN-weighted fractions) + (VEC-weighted fractions)';
+  let physName='Melting pt + Electronegativity + Valency projection '+r;
+  rows.push({group:'Roost Block 3 — Property-weighted projections (Tₘ × EN × VEC)', code:`R_${String(idx).padStart(2,'0')}`, pill:'p-tm', name:`Tₘ/EN/VEC projection ${r}`, physName:physName, formula:`W[${r},:] · [x⊙Tₘ/4000 | x⊙EN/4 | x⊙VEC/6]`, unit:'unbounded', desc:desc});
+}
+
+// MatBERT PCA
+const pcaDesc = [
+  {range:'M_00–08', name:'Primary semantic axes', phys:'Dominant elemental character', desc:'Captures ~60–70% of variance. Primarily driven by metallic vs. non-metallic character (Hf/Zr/Ta vs. C/N/B differences).'},
+  {range:'M_09–19', name:'Secondary axes', phys:'Valency & radius contrasts', desc:'Captures next ~15% variance. Encodes electronegativity and atomic radius contrasts across the 9 elements.'},
+  {range:'M_20–39', name:'Tertiary axes', phys:'Composition-specific patterns', desc:'Captures ~10% variance. Encodes sparse compositional patterns and element-group interactions.'},
+  {range:'M_40–69', name:'Residual axes', phys:'Formula-specific noise', desc:'Remaining ~5% variance. Mostly formula-specific noise from the MatBERT perturbation term. 17 columns removed by VIF pruning in Step 4.'},
+];
+pcaDesc.forEach(g=>{
+  const [start,end]=g.range.replace('M_','').split('–').map(Number);
+  for(let i=start;i<=end;i++){
+    rows.push({group:`MatBERT PCA — ${g.range}`, code:`M_${String(i).padStart(2,'0')}`, pill:'p-pca', name:g.name+` (PC ${i+1})`, physName:g.phys, formula:`PC${i+1} of Std(W_global · x + ε), W∈ℝ^{768×9}`, unit:'unbounded', desc:g.desc+(i===40?' ← VIF pruning removes many here':'')});
+  }
+});
+
+// Build tables
+function makeHeader(t){
+  const tr=document.createElement('tr');
+  ['Column code','Physical name','Exact formula','Unit','What it represents'].forEach(h=>{
+    const th=document.createElement('th');th.textContent=h;tr.appendChild(th);
+  });
+  t.appendChild(tr);
+}
+
+function makeSection(t, label){
+  const tr=document.createElement('tr');
+  const td=document.createElement('td');
+  td.colSpan=5;
+  td.className='section-header';
+  td.textContent=label;
+  tr.appendChild(td);
+  t.appendChild(tr);
+}
+
+function makeRow(t, row){
+  const tr=document.createElement('tr');
+  const cells=[
+    `<span class="code">${row.code}</span>`,
+    `<span class="pill ${row.pill}">${row.name}</span>`,
+    `<span class="formula">${row.formula}</span>`,
+    `<span class="unit">${row.unit}</span>`,
+    `<span class="phys">${row.desc}</span>`
+  ];
+  cells.forEach(c=>{const td=document.createElement('td');td.innerHTML=c;tr.appendChild(td);});
+  t.appendChild(tr);
+}
+
+function buildTable(tableId, groupFilter){
+  const t=document.getElementById(tableId);
+  makeHeader(t);
+  let lastGroup='';
+  rows.forEach(row=>{
+    if(groupFilter && !groupFilter.some(g=>row.group.startsWith(g))) return;
+    if(row.group!==lastGroup){makeSection(t,row.group);lastGroup=row.group;}
+    makeRow(t,row);
+  });
+}
+
+buildTable('t-all', null);
+buildTable('t-identity',['Identity & Targets']);
+buildTable('t-b1',['Roost Block 1a','Roost Block 1b']);
+buildTable('t-b2',['Roost Block 2']);
+buildTable('t-b3',['Roost Block 3']);
+buildTable('t-mb',['MatBERT']);
+
+function show(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('p-'+id).classList.add('active');
+}
+</script>
