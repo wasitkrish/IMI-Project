@@ -1,0 +1,317 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:32px 28px 40px}
+.title-block{margin-bottom:32px}
+.pipe-title{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.pipe-sub{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-right:6px}
+.badge-a{background:#EEEDFE;color:#3C3489}
+.badge-b{background:#E1F5EE;color:#085041}
+.badge-c{background:#FAEEDA;color:#633806}
+@media(prefers-color-scheme:dark){
+  .badge-a{background:#26215C;color:#CECBF6}
+  .badge-b{background:#04342C;color:#9FE1CB}
+  .badge-c{background:#412402;color:#FAC775}
+}
+.stages{display:grid;grid-template-columns:1fr;gap:0}
+.stage-row{display:grid;grid-template-columns:52px 1fr;gap:0;align-items:stretch}
+.stage-num-col{display:flex;flex-direction:column;align-items:center}
+.stage-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;z-index:1}
+.stage-line{flex:1;width:2px;min-height:16px}
+.stage-line-top{background:linear-gradient(to bottom,transparent,var(--line-color))}
+.stage-line-bot{background:linear-gradient(to bottom,var(--line-color),transparent)}
+.stage-line-mid{background:var(--line-color)}
+.card{border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:16px 18px;margin:8px 0 8px 12px;background:var(--color-background-primary);cursor:pointer;transition:border-color .2s}
+.card:hover{border-color:var(--color-border-secondary)}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.card-label{font-size:11px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;margin-bottom:4px}
+.card-name{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.card-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:12px}
+.card-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:11px;padding:3px 9px;border-radius:6px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);background:var(--color-background-secondary)}
+.chip-in{border-color:var(--color-border-secondary);color:var(--color-text-secondary)}
+.chip-out{font-weight:500}
+.output-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);font-size:12px}
+.output-row+.output-row{margin-top:6px}
+.file-icon{width:24px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;flex-shrink:0}
+.csv-icon{background:#EAF3DE;color:#27500A;border:0.5px solid #C0DD97}
+.xlsx-icon{background:#E1F5EE;color:#085041;border:0.5px solid #9FE1CB}
+@media(prefers-color-scheme:dark){
+  .csv-icon{background:#173404;color:#C0DD97;border-color:#3B6D11}
+  .xlsx-icon{background:#04342C;color:#9FE1CB;border-color:#0F6E56}
+}
+.output-info{flex:1}
+.output-name{color:var(--color-text-primary);font-weight:500}
+.output-meta{color:var(--color-text-secondary);margin-top:1px}
+.finding{display:flex;align-items:flex-start;gap:6px;padding:8px 10px;border-radius:8px;font-size:12px;line-height:1.4;margin-top:10px}
+.finding-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.legend{display:flex;gap:16px;margin-top:28px;padding-top:16px;border-top:0.5px solid var(--color-border-tertiary);flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+.n0{background:#EEEDFE;color:#3C3489}.l0{background:#AFA9EC;--line-color:#AFA9EC}.o0{color:#534AB7}
+.n1{background:#E1F5EE;color:#085041}.l1{background:#5DCAA5;--line-color:#5DCAA5}.o1{color:#0F6E56}
+.n2{background:#FAEEDA;color:#633806}.l2{background:#EF9F27;--line-color:#EF9F27}.o2{color:#854F0B}
+.n3{background:#FAECE7;color:#711B13}.l3{background:#F0997B;--line-color:#F0997B}.o3{color:#993C1D}
+.n4{background:#E6F1FB;color:#0C447C}.l4{background:#85B7EB;--line-color:#85B7EB}.o4{color:#185FA5}
+.n5{background:#EAF3DE;color:#173404}.l5{background:#97C459;--line-color:#97C459}.o5{color:#3B6D11}
+.n6{background:#F1EFE8;color:#444441}.l6{background:#B4B2A9;--line-color:#B4B2A9}.o6{color:#5F5E5A}
+
+@media(prefers-color-scheme:dark){
+  .n0{background:#26215C;color:#CECBF6}.o0{color:#AFA9EC}
+  .n1{background:#04342C;color:#9FE1CB}.o1{color:#5DCAA5}
+  .n2{background:#412402;color:#FAC775}.o2{color:#EF9F27}
+  .n3{background:#4A1B0C;color:#F5C4B3}.o3{color:#F0997B}
+  .n4{background:#042C53;color:#B5D4F4}.o4{color:#85B7EB}
+  .n5{background:#173404;color:#C0DD97}.o5{color:#97C459}
+  .n6{background:#2C2C2A;color:#D3D1C7}.o6{color:#B4B2A9}
+}
+
+.chip-out-0{background:#EEEDFE;color:#534AB7;border-color:#AFA9EC}
+.chip-out-1{background:#E1F5EE;color:#0F6E56;border-color:#5DCAA5}
+.chip-out-2{background:#FAEEDA;color:#854F0B;border-color:#EF9F27}
+.chip-out-3{background:#FAECE7;color:#993C1D;border-color:#F0997B}
+.chip-out-4{background:#E6F1FB;color:#185FA5;border-color:#85B7EB}
+.chip-out-5{background:#EAF3DE;color:#3B6D11;border-color:#97C459}
+.chip-out-6{background:#F1EFE8;color:#5F5E5A;border-color:#B4B2A9}
+
+@media(prefers-color-scheme:dark){
+  .chip-out-0{background:#26215C;color:#CECBF6;border-color:#AFA9EC}
+  .chip-out-1{background:#04342C;color:#9FE1CB;border-color:#5DCAA5}
+  .chip-out-2{background:#412402;color:#FAC775;border-color:#EF9F27}
+  .chip-out-3{background:#4A1B0C;color:#F5C4B3;border-color:#F0997B}
+  .chip-out-4{background:#042C53;color:#B5D4F4;border-color:#85B7EB}
+  .chip-out-5{background:#173404;color:#C0DD97;border-color:#97C459}
+  .chip-out-6{background:#2C2C2A;color:#D3D1C7;border-color:#B4B2A9}
+}
+
+.finding-bg-0{background:#EEEDFE}.finding-bg-1{background:#E1F5EE}.finding-bg-2{background:#FAEEDA}
+.finding-bg-3{background:#FAECE7}.finding-bg-4{background:#E6F1FB}.finding-bg-5{background:#EAF3DE}
+.finding-bg-6{background:#F1EFE8}
+
+@media(prefers-color-scheme:dark){
+  .finding-bg-0{background:#26215C}.finding-bg-1{background:#04342C}.finding-bg-2{background:#412402}
+  .finding-bg-3{background:#4A1B0C}.finding-bg-4{background:#042C53}.finding-bg-5{background:#173404}
+  .finding-bg-6{background:#2C2C2A}
+}
+
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:24px}
+.stat-card{background:var(--color-background-secondary);border-radius:8px;padding:12px 14px}
+.stat-val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-lbl{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+</style>
+
+<div class="wrap">
+  <div class="title-block">
+    <div class="pipe-title">UHTM Materials Informatics Pipeline</div>
+    <div class="pipe-sub" style="margin-top:6px">
+      <span class="badge badge-a">Hf·Zr·Ta·Nb·Ti·C·B·N·Si</span>
+      <span class="badge badge-b">6 stages · 700 compounds</span>
+      <span class="badge badge-c">Seed 42</span>
+    </div>
+  </div>
+
+  <div class="stages" id="stages"></div>
+
+  <div class="summary-grid">
+    <div class="stat-card"><div class="stat-val">700</div><div class="stat-lbl">Unique compositions</div></div>
+    <div class="stat-card"><div class="stat-val">140-d</div><div class="stat-lbl">Master feature vector</div></div>
+    <div class="stat-card"><div class="stat-val">140</div><div class="stat-lbl">DFT candidate compounds</div></div>
+    <div class="stat-card"><div class="stat-val">123</div><div class="stat-lbl">Features post-pruning</div></div>
+    <div class="stat-card"><div class="stat-val">Top 25</div><div class="stat-lbl">SHAP-selected features</div></div>
+    <div class="stat-card"><div class="stat-val">8 files</div><div class="stat-lbl">Datasets exported</div></div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#AFA9EC"></div>Sampling</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#5DCAA5"></div>Feature extraction</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EF9F27"></div>Gap analysis</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F0997B"></div>Pruning</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#85B7EB"></div>Interpretability</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#97C459"></div>Export</div>
+  </div>
+</div>
+
+<script>
+const stages = [
+  {
+    n:"0", label:"Setup", name:"Environment & constants",
+    cls:0,
+    desc:"Elemental property library for Hf·Zr·Ta·Nb·Ti·C·B·N·Si — five physical scalars per element (Tₘ, EN, VEC, r, M). Thermodynamic interaction boosts: ΔTₘ(Hf,C)=+800 K, (Ta,C)=+900 K, (Zr,N)=+700 K.",
+    inputs:["9 elements","5 properties each"],
+    outputs:["ELEMENT_PROPS","INTERACTION_BOOSTS"],
+    files:[],
+    finding:"Elemental library anchors all physics-proxy computations downstream."
+  },
+  {
+    n:"1", label:"Step 1", name:"Dirichlet sampling + proxy targets",
+    cls:0,
+    desc:"Sparse Dirichlet sampling (α=0.5) generates 700 unique compositions. Physics-proxy targets computed per composition: melting point (rule-of-mixtures + interaction boosts), oxidation resistance (Si/B fraction + EN mismatch), toughness (mixing entropy × VEC).",
+    inputs:["9-element chemical space"],
+    outputs:["df_raw — 700 rows × 12 cols","Tm_K · OxRes · Toughness"],
+    files:[{name:"step1_raw_compositions.csv",type:"csv",rows:"700",cols:"12"},{name:"step1_raw_compositions.xlsx",type:"xlsx",rows:"700",cols:"12"}],
+    finding:"α=0.5 produces sparse, realistic formulas dominated by 2–4 principal elements. Tₘ ~N(2500 K); OxRes right-skewed."
+  },
+  {
+    n:"2", label:"Step 2", name:"Dual-model feature extraction",
+    cls:1,
+    desc:"Roost GNN (70-d): three composition blocks — raw + squared fractions, pairwise products, property-weighted projections. MatBERT (70-d): 768-d BERT embeddings compressed via PCA retaining ~90% variance. Master vector = [Roost | MatBERT] ∈ ℝ¹⁴⁰.",
+    inputs:["df_raw (700 compositions)"],
+    outputs:["roost_feats (700×70)","matbert_feats (700×70)","df_combined (700×153)"],
+    files:[{name:"step2_master_features.csv",type:"csv",rows:"700",cols:"153"},{name:"step2_master_features.xlsx",type:"xlsx",rows:"700",cols:"153"}],
+    finding:"PCA: top-10 PCs capture ~70% variance; 70 PCs = ~90%. Roost and MatBERT spaces are nearly orthogonal — complementary encodings."
+  },
+  {
+    n:"3", label:"Step 3", name:"Literature–theory gap analysis",
+    cls:2,
+    desc:"Cosine similarity between Roost and MatBERT vectors per compound. Compounds below the 20th percentile threshold are gap-flagged — signalling divergence between physics-theory and experimental-literature representations.",
+    inputs:["roost_feats","matbert_feats"],
+    outputs:["cosine_sims","LitTheory_Gap_Flag","140 gap-flagged compounds"],
+    files:[{name:"step3_gap_analysis.csv",type:"csv",rows:"700",cols:"14"},{name:"step3_gap_flagged_only.csv",type:"csv",rows:"140",cols:"14"}],
+    finding:"Similarity centred near 0 (σ≈0.21) confirms orthogonality — ideal for concatenation. 140 flagged compounds are high-priority DFT candidates."
+  },
+  {
+    n:"4", label:"Step 4", name:"Statistical pruning (Pearson + VIF)",
+    cls:3,
+    desc:"Two-stage redundancy elimination. Stage A: Pearson |r|>0.95 removes linear duplicates. Stage B: iterative VIF>10 removal eliminates multicollinear features. Result: 140 → 123 features.",
+    inputs:["df_features (700×140)"],
+    outputs:["X_vif (700×123)","feat_vif list"],
+    files:[{name:"step4_pruned_features.csv",type:"csv",rows:"700",cols:"136"},{name:"step4_pruned_features.xlsx",type:"xlsx",rows:"700",cols:"136"}],
+    finding:"Pearson stage: 0 dropped (architectures span independent directions). VIF stage: 17 MatBERT components removed due to shared variance with Roost Block 3."
+  },
+  {
+    n:"5", label:"Step 5", name:"SHAP feature importance",
+    cls:4,
+    desc:"Random Forest (200 trees, depth 8) trained on 123 pruned features → Tₘ. SHAP TreeExplainer computes Shapley values. Top-25 features selected by mean |SHAP|. 5-fold CV R² evaluated.",
+    inputs:["X_vif (700×123)","y = Tm_K"],
+    outputs:["shap_values (700×123)","top25_names · top25_shap","X_top25 (700×25)"],
+    files:[{name:"step5_shap_importance.csv",type:"csv",rows:"25",cols:"5"},{name:"step5_shap_values_matrix.csv",type:"csv",rows:"700",cols:"26"}],
+    finding:"Top 2–3 Roost Block 3 features dominate (rule-of-mixtures Tₘ encoding). First MatBERT feature appears at rank 25 — marginal but non-zero complementarity."
+  },
+  {
+    n:"6", label:"Step 6", name:"Data export for inverse design",
+    cls:5,
+    desc:"Final inverse-design dataframe: Formula + 9 composition fractions + 3 targets + 2 diagnostic columns + 25 SHAP-selected features. Saved as CSV and Excel. Ready for BoTorch qNEHVI multi-objective optimisation or genetic algorithms.",
+    inputs:["df_combined","X_top25 (700×25)"],
+    outputs:["df_inv (700×40)","uhtm_inverse_design_ready.csv","uhtm_shap_feature_metadata.csv"],
+    files:[{name:"step6_inverse_design_ready.csv",type:"csv",rows:"700",cols:"40"},{name:"step6_inverse_design_ready.xlsx",type:"xlsx",rows:"700",cols:"40"}],
+    finding:"Post-pruning feature–feature correlations near zero. Roost features most linearly associated with Tₘ; OxRes/Toughness show non-linear dependencies — motivating surrogate models."
+  }
+];
+
+const container = document.getElementById('stages');
+
+stages.forEach((s,i)=>{
+  const isFirst = i===0, isLast = i===stages.length-1;
+  const c = s.cls;
+  const row = document.createElement('div');
+  row.className = 'stage-row';
+
+  const numCol = document.createElement('div');
+  numCol.className = 'stage-num-col';
+
+  if(!isFirst){
+    const lt = document.createElement('div');
+    lt.className = `stage-line l${c}`;
+    lt.style.height='16px';
+    lt.style.marginBottom='0';
+    numCol.appendChild(lt);
+  } else {
+    const sp=document.createElement('div');sp.style.height='8px';numCol.appendChild(sp);
+  }
+
+  const num = document.createElement('div');
+  num.className = `stage-num n${c}`;
+  num.textContent = s.n;
+  numCol.appendChild(num);
+
+  if(!isLast){
+    const lb = document.createElement('div');
+    lb.className = `stage-line l${c}`;
+    lb.style.flex='1';
+    numCol.appendChild(lb);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'card-header';
+  const lft = document.createElement('div');
+  const lbl = document.createElement('div');
+  lbl.className = `card-label o${c}`;
+  lbl.textContent = s.label;
+  const nm = document.createElement('div');
+  nm.className = 'card-name';
+  nm.textContent = s.name;
+  lft.appendChild(lbl);lft.appendChild(nm);
+  hdr.appendChild(lft);
+
+  const desc = document.createElement('div');
+  desc.className = 'card-desc';
+  desc.textContent = s.desc;
+
+  const chips = document.createElement('div');
+  chips.className = 'card-chips';
+  s.inputs.forEach(inp=>{
+    const ch = document.createElement('span');
+    ch.className = 'chip chip-in';
+    ch.textContent = '← '+inp;
+    chips.appendChild(ch);
+  });
+  s.outputs.forEach(out=>{
+    const ch = document.createElement('span');
+    ch.className = `chip chip-out chip-out-${c}`;
+    ch.textContent = '→ '+out;
+    chips.appendChild(ch);
+  });
+
+  card.appendChild(hdr);
+  card.appendChild(desc);
+  card.appendChild(chips);
+
+  if(s.files.length){
+    const fileLabel = document.createElement('div');
+    fileLabel.style.cssText='font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);margin-bottom:6px';
+    fileLabel.textContent='Exported datasets';
+    card.appendChild(fileLabel);
+    s.files.forEach(f=>{
+      const fr = document.createElement('div');
+      fr.className = 'output-row';
+      const icon = document.createElement('div');
+      icon.className = `file-icon ${f.type==='csv'?'csv-icon':'xlsx-icon'}`;
+      icon.textContent = f.type.toUpperCase();
+      const info = document.createElement('div');
+      info.className = 'output-info';
+      const nm2 = document.createElement('div');
+      nm2.className = 'output-name';
+      nm2.textContent = f.name;
+      const mt = document.createElement('div');
+      mt.className = 'output-meta';
+      mt.textContent = f.rows ? `${f.rows} rows × ${f.cols} cols` : '';
+      info.appendChild(nm2);if(f.rows)info.appendChild(mt);
+      fr.appendChild(icon);fr.appendChild(info);
+      card.appendChild(fr);
+    });
+  }
+
+  if(s.finding){
+    const find = document.createElement('div');
+    find.className = `finding finding-bg-${c}`;
+    const dot = document.createElement('div');
+    dot.className = `finding-dot`;
+    dot.style.background = ['#AFA9EC','#5DCAA5','#EF9F27','#F0997B','#85B7EB','#97C459','#B4B2A9'][c];
+    const txt = document.createElement('span');
+    txt.style.cssText = `color:var(--color-text-secondary);font-size:12px`;
+    txt.textContent = s.finding;
+    find.appendChild(dot);find.appendChild(txt);
+    card.appendChild(find);
+  }
+
+  row.appendChild(numCol);
+  row.appendChild(card);
+  container.appendChild(row);
+});
+</script>
