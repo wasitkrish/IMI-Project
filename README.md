@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔥 UHTM Dataset — IMI Project
+# UHTM Dataset — IMI Project
 
 ### Ultra-High Temperature Materials · Physics-Informed Feature Engineering
 
